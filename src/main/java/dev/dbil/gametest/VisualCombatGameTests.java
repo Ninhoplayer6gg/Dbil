@@ -268,7 +268,8 @@ public final class VisualCombatGameTests {
         }
     }
 
-    @GameTest(template = "empty", batch = "dbil_v03")
+    /** Own batch: tests in one batch run side by side, and their opponents would be valid lock-on candidates. */
+    @GameTest(template = "empty", batch = "dbil_v03_lock")
     public static void lockOnCyclesBetweenOpponents(GameTestHelper helper) {
         ServerPlayer player = fakePlayer(helper, "Alvo");
         create(helper, player, Races.HUMAN, 1);

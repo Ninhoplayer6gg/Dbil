@@ -99,6 +99,7 @@ public final class ClientEvents {
         long tick = minecraft.level.getGameTime();
         if (tick - lastLightTick > 24) lightCount = 0;
         WorldEffectsRenderer.tickParticles(minecraft);
+        dev.dbil.client.fx.CameraEffects.tickLocal(ClientState.visual(minecraft.player.getId()), tick);
         LoopingSounds.tick(minecraft);
         if (tick % 100 == 0) {
             ClientState.prune();

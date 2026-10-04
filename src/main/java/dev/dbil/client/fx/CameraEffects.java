@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.Mod;
 public final class CameraEffects {
     private static float trauma;
     private static float fovKick;
-    private static float fastBlend;
+    private static float fastBlend, chargeBlend;
     private static long lastNanos;
 
     private CameraEffects() {}
@@ -25,6 +25,11 @@ public final class CameraEffects {
     public static void shake(float amount) {
         if (!ClientConfig.SPEC.isLoaded() || ClientConfig.screenShake.get() <= 0) return;
         trauma = Math.min(1, trauma + amount);
+    }
+
+    /** Light continuous rumble while the local player powers up (called every client tick). */
+    public static void tickLocal(ClientState.VisualState own, long tick) {
+        if ((own.charging() || own.transforming()) && tick % 8 == 0) shake(own.transforming() ? 0.06F : 0.03F);
     }
 
     public static void special(float shake, float fov) {
@@ -56,8 +61,12 @@ public final class CameraEffects {
         boolean fast = ClientFlightController.active() && ClientState.visual(minecraft.player.getId()).fastFlight()
                 && ClientFlightController.velocity().length() > ClientFlightController.cruiseSpeed() * 1.05;
         fastBlend += ((fast ? 1 : 0) - fastBlend) * 0.08F;
+        ClientState.VisualState own = ClientState.visual(minecraft.player.getId());
+        boolean powering = own.charging() || own.transforming();
+        chargeBlend += ((powering ? 1 : 0) - chargeBlend) * 0.06F;
         double intensity = ClientConfig.fovIntensity.get();
-        double extra = (fastBlend * 14 + fovKick) * intensity;
+        float breathing = chargeBlend * (1.5F + 0.8F * Mth.sin(System.nanoTime() / 1.0e9F * 5.5F));
+        double extra = (fastBlend * 14 + fovKick + breathing) * intensity;
         if (extra > 0.01) event.setFOV(event.getFOV() + extra);
     }
 }
