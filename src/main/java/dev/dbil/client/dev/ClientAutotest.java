@@ -23,12 +23,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
 import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.server.IntegratedServer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
@@ -105,11 +107,27 @@ public final class ClientAutotest {
                 serverData.setKi(serverData.maxKi());
                 level.setDayTime(6000);
                 level.setWeatherParameters(12000, 0, false, false);
-                Vec3 look = player.getLookAngle();
-                forward = new Vec3(look.x, 0, look.z).normalize();
-                right = new Vec3(-forward.z, 0, forward.x);
-                origin = player.position();
+                // The world spawn is randomized (it once landed in the ocean, where flight and transformation are
+                // correctly refused), so every run builds the same dry arena first.
+                BlockPos center = player.blockPosition();
+                int top = level.getSeaLevel() + 1;
+                for (int dx = -12; dx <= 12; dx++) {
+                    for (int dz = -12; dz <= 12; dz++) {
+                        BlockPos column = center.offset(dx, 0, dz);
+                        level.setBlock(column.atY(top), Blocks.GRASS_BLOCK.defaultBlockState(), 2);
+                        level.setBlock(column.atY(top - 1), Blocks.DIRT.defaultBlockState(), 2);
+                        level.setBlock(column.atY(top - 2), Blocks.DIRT.defaultBlockState(), 2);
+                        for (int y = top + 1; y <= top + 20; y++) {
+                            if (!level.getBlockState(column.atY(y)).isAir()) level.setBlock(column.atY(y), Blocks.AIR.defaultBlockState(), 2);
+                        }
+                    }
+                }
                 originYaw = player.getYRot();
+                origin = new Vec3(center.getX() + 0.5, top + 1, center.getZ() + 0.5);
+                player.connection.teleport(origin.x, origin.y, origin.z, originYaw, 0);
+                float yawRadians = originYaw * ((float) Math.PI / 180F);
+                forward = new Vec3(-Mth.sin(yawRadians), 0, Mth.cos(yawRadians));
+                right = new Vec3(-forward.z, 0, forward.x);
                 // The rival stands beyond the front camera (4 blocks) so front shots see the fighter, not the rival.
                 spawnRival(level, origin.add(forward.scale(7.0)).add(right.scale(2.5)));
                 // Invisible side camera for cinematic shots of beams and blows.
@@ -220,7 +238,21 @@ public final class ClientAutotest {
             case 568 -> refill(mc);
             case 570 -> Network.sendSelectTechnique(Techniques.MASENKO);
             case 588 -> shot(mc, "19_masenko_side");
-            case 600 -> {
+            case 600, 636 -> refill(mc);
+            case 602 -> Network.sendSelectTechnique(Techniques.KI_BARRAGE);
+            case 604 -> Network.sendAction(Action.TECHNIQUE);
+            case 614, 666, 684 -> sideCamera(mc, true);
+            case 617 -> shot(mc, "20_ki_barrage_side");
+            case 618, 669, 687 -> sideCamera(mc, false);
+            case 640 -> server(mc, (server, player, level) -> spawnRival(level, origin.add(forward.scale(4.5)).add(right.scale(0.5))));
+            case 646 -> Network.sendAction(Action.LOCK_ON);
+            case 656 -> { log("vanish target=" + ClientState.visual(self).targetId()); Network.sendAction(Action.VANISH); }
+            case 662 -> shot(mc, "21_vanish_behind_target");
+            case 668 -> shot(mc, "21b_vanish_side");
+            case 680 -> Network.sendAction(Action.GUARD_START);
+            case 686 -> shot(mc, "22_guard_side");
+            case 690 -> { log("guarding=" + ClientState.visual(self).guarding()); Network.sendAction(Action.GUARD_STOP); }
+            case 700 -> {
                 log("beam ticks observed=" + beamsSeen + " kamehameha charge at shot=" + maxCharge + "%");
                 log("final form=" + ClientState.visual(self).transformation() + " appearance=" + ClientState.data().appearance());
                 log("PASS: sequence completed without client exceptions");

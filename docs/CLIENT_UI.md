@@ -1,35 +1,68 @@
-# Interface e apresentação v0.2
+# Interface e controles — DBIL 0.3
 
-Código de cliente, GUI, renderização e animação é carregado apenas pelo lado cliente. Screens e efeitos usam snapshots do servidor. Dano, custos, cooldowns, desbloqueios e recompensas continuam autoritativos.
+Código de cliente (GUI, renderização, animação, efeitos) só é carregado no cliente. As telas leem snapshots do
+servidor; dano, custos, cooldowns, desbloqueios e recompensas continuam autoritativos.
 
-## Controles e menu
+## Teclas (remapeáveis em Opções → Controles → DBIL)
 
-`R` segura carregamento de Ki; `G` alterna voo; `X` faz dash; `C` usa a técnica selecionada; `V` seleciona/libera alvo; `J` abre o menu. Mão vazia: clique de ataque leve; Shift + ataque pesado; botão direito com alvo para guarda. Teclas são remapeáveis nas opções vanilla. A HUD exibe o remapeamento atual.
+| Tecla | Ação |
+|---|---|
+| R (segurar) | Carregar Ki (no chão ou em voo parado) |
+| G | Ligar/desligar voo; Espaço/Shift sobem/descem; Ctrl/sprint = voo rápido |
+| X | Dash; com A/D/S lateral ou para trás; logo após launcher/smash/final = perseguição |
+| C | Técnica selecionada: toque = disparo imediato; segurar = carregar, soltar = disparar |
+| N | Próxima técnica equipada |
+| V / B | Travar/soltar alvo · trocar alvo |
+| Z | Vanish (precisa de alvo travado) |
+| J | Menu DBIL |
+| Ataque (mão vazia) | Combo leve; Shift = pesado/smash; Espaço = launcher |
+| Botão direito (mão vazia, com alvo) | Guarda |
 
-A criação solicita nome, raça, origem e estilo; somente a confirmação do servidor fecha o formulário. Schema mais recente permanece protegido e não abre criação nova.
+Mão vazia só intercepta o ataque quando há entidade no cursor, alvo travado próximo ou o jogador está no ar;
+caso contrário a mineração vanilla funciona normalmente. Itens e ferramentas mantêm o comportamento vanilla.
 
-O menu funciona em tempo real. As setas junto ao título alternam dois grupos de abas: Personagem/Atributos/Ações/Técnicas e Formas/Treino/Opções. Ações possui botões grandes para os ataques, técnica selecionada, guarda, carregamento, dash, alvo e voo, além de avanço/recuo/esquerda/direita/subida/descida. Movimento, carga e guarda de toque param ao sair ou trocar de aba. Morte e logout limpam os controles para evitar ações presas ao voltar.
+## Criação e edição de aparência (`CharacterCreationScreen`)
 
-Técnicas lista Ki Wave, Disparo de Ki e Rajada de Ki, mostra custo base, alcance e cooldown e permite solicitar seleção de técnicas desbloqueadas. Formas mostra Super Saiyajin e Potencial Liberado, requisitos, custo inicial e maestria, e oferece ativar ou voltar à forma base. Seleção e ativação aguardam snapshots; a interface não muda dados autoritativos por conta própria.
+- **Criação**: páginas Identidade (nome, raça, origem, estilo), Corpo, Rosto, Cabelo e Roupa, com prévia 3D ao vivo
+  à esquerda (arrastar ou « » giram; na página Cabelo, Saiyajins alternam a prévia Super Saiyajin). Trocar de raça mantém o visual
+  personalizado e só aplica o padrão da raça se o jogador ainda não mexeu na aparência.
+- **Edição** (J → Personagem → Editar aparência): mesmas páginas sem Identidade; "Salvar aparência" envia o pacote 7.
+  O servidor valida e sincroniza para todos que veem o personagem.
+- Somente a confirmação do servidor fecha a criação; saves de versão mais nova continuam protegidos.
 
-Treino pagina os três desafios e seus objetivos, mostra voo em segundos e recompensas automáticas, e oferece Iniciar sparring sem comandos administrativos. O servidor exige local seguro, intervalo entre sessões e limites de rivais; pedidos recusados exibem mensagens traduzidas. As recompensas desbloqueiam técnicas e a transformação racial pelo progresso individual.
+## Menu J (`DBILMenuScreen`)
 
-## Câmera e HUD
+Duas páginas de abas (setas ao lado do título):
 
-A câmera de lock-on agora vem ativada por `interface.lockOnCamera=true`. A opção antiga `camera=false` de v0.1 não controla esse campo. Forge acrescenta a chave nova ao corrigir configurações antigas; um valor explícito `lockOnCamera=false` já existente é preservado. Não há sobrescrita incondicional de preferências. `specialCamera=false` permanece uma política separada para efeitos cinematográficos futuros e não desativa lock-on.
+1. **Personagem** (dados, nível, poder, botão Editar aparência e resumo dos controles), **Atributos**, **Ações**,
+   **Técnicas**.
+2. **Formas**, **Treino**, **Opções**.
 
-`TargetCamera` suaviza yaw/pitch por frame, usando tempo real limitado, resposta exponencial e posição interpolada do alvo. O acompanhamento funciona na primeira pessoa e na câmera traseira vanilla, no jogo solo e cooperativo, inclusive usando os botões da aba Ações. Chat, outras telas/abas, montagem, morte e câmera em outra entidade suspendem o acompanhamento. A câmera frontal vanilla continua sendo a perspectiva voltada ao próprio jogador. A opção Seguir alvo com câmera fica na aba Opções.
+- **Ações** (toque/Android): duas páginas de botões grandes — combate (leve, pesado, launcher, smash, guarda,
+  técnica segurar/disparar, próxima técnica, alvo/trocar alvo, Vanish, carga de Ki) e movimento (voo, voo rápido,
+  dashes direcionais, frente/trás/esquerda/direita/subir/descer). Controles mantidos param ao sair da aba, morrer ou
+  desconectar.
+- **Técnicas**: lista paginada das 6 técnicas com custo, alcance, recarga e perfil; selecionar, equipar e desequipar
+  (até 6 slots).
+- **Formas**: requisitos, custo, maestria; ativar ou voltar à base.
+- **Treino**: desafios (agora seis) com objetivos e recompensas; iniciar sparring.
+- **Opções**: duas páginas com HUD, câmera, qualidade de aura, partículas, distância de efeitos, tremor, FOV,
+  impactos, animações extras, linhas de velocidade, vento, efeitos de transformação e modelo DBIL.
 
-A HUD usa `hudX`/`hudY` normalizados e `hudScale` limitado à tela. Defaults 0,02/0,04 colocam o painel no canto superior esquerdo, preservando hotbar. Mostra HP, Ki e Stamina reais, nível, Poder de Luta opcional, técnica selecionada, cooldown, voo, guarda/quebra de guarda e forma. O cartão de alvo apresenta nome, HP, Poder de Luta enviado pelo servidor, distância e estado da câmera; tenta ocupar espaço ao lado da HUD própria. Ausência de metadata de poder mostra `?`, sem inventar atributos remotos.
+## HUD, câmera e efeitos
 
-## Transformações e efeitos
+Descritos em [EFFECTS_HUD.md](EFFECTS_HUD.md). Resumo: HUD AUTO compacta fora de combate e expandida em combate,
+com escala automática para telas pequenas × `hudScale`; painel do alvo e retículo 3D; medidor de carga; banner de
+transformação. A câmera de lock-on (`lockOnCamera`, padrão ligado) suaviza yaw/pitch por frame como na 0.2.
 
-`SaiyanHairLayer` adiciona cabelo dourado estilizado de sete pontas ao Super Saiyajin confirmado pelo servidor, sem substituir o skin. A malha usa 136 vértices e 40 triângulos visíveis, calculados uma vez, acompanha o modelo da cabeça e funciona nos modelos de jogador normal e slim. Não exige GeckoLib, shader ou access transformer. Olhos e aparência facial do skin permanecem preservados.
+## Personagem e animação
 
-Auras registráveis são azuis para carga/técnica, amarelas para Super Saiyajin e brancas para Potencial Liberado. A emissão respeita partículas, intensidade, qualidade e distância configuradas, com no máximo quatro partículas por jogador ativo a cada quatro ticks. Posturas de carga, preparação da técnica e guarda usam extensões ArmPose do Forge e os estados do servidor. Potencial Liberado conserva o modelo e o cabelo do skin.
-
-O rival de treinamento mantém modelo/textura de zumbi vanilla temporários isolados no renderer. Ki Wave usa um billboard radial luminoso leve. Não há shaders obrigatórios ou destruição de terreno.
+Modelo próprio estilo Minecraft, cabelos voxel e roupas 3D: [VISUAL_CHARACTER.md](VISUAL_CHARACTER.md).
+Animações procedurais: [ANIMATION.md](ANIMATION.md).
 
 ## Validação
 
-PT-BR e EN-US possuem as mesmas chaves. Fontes de GUI, modelos e efeitos são compiladas com o restante do mod. Testes visuais, seguimento de câmera, Android real e multiplayer precisam ser registrados pela execução efetiva; build e GameTests de servidor isoladamente não substituem esses testes.
+PT-BR e EN-US têm as mesmas chaves (verificado no commit). O CI executa um cliente real (Xvfb, renderização por
+software) que percorre criação, HUD, lock-on, aura, transformação, Kamehameha, combo, voo rápido, editor de
+aparência, menu e primeira pessoa, com screenshots; veja [VALIDATION.md](VALIDATION.md). Android real e dois
+clientes simultâneos ainda precisam de teste manual.

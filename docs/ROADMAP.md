@@ -2,20 +2,21 @@
 
 O personagem do jogador continua protagonista. Personagens conhecidos entram como mestres, aliados, NPCs e chefes, após a fundação ser validada.
 
-| Etapa | Entrega | Condição antes de avançar |
+| Etapa | Entrega | Situação |
 |---|---|---|
-| Fundação atual | Criação, recursos, voo, combate, Ki Wave, inimigo, progressão, persistência e multiplayer | Build + servidor dedicado + dois clientes + teste Android |
-| 2 — versão 0.2 | Super Saiyajin, Potencial Despertado, domínio, aura e desafios iniciais | Ativação e drain autoritativos, morte e reconnect corretos, orçamento de efeitos |
-| 3 | Kamehameha, Galick Gun, Masenko, seleção contextual, carga variável, lock-on completo | Validação de targeting, custo/cooldown e latência |
-| 4 | Mestres e desafios de treinamento | Recompensas únicas, requisitos e confiança persistentes |
-| 5 | Namekuseijin, Majin, raça do Freeza e Androides | Definições raciais isoladas e testes de passivas |
-| 6 | Dragon Balls, Shenlong, Scouter e detecção/ocultação de Ki | Spawn controlado, cooldown e regras de multiplayer |
-| 7 | Dimensões, Namek, planetas e Outro Mundo | Transferência de dados e respawn independentes do vanilla |
-| 8 | Beam Clash, fusão, ataques cooperativos e bosses | Simulação compartilhada com limites de entidades/custos |
+| Fundação (0.1) | Criação, recursos, voo, combate, Ki Wave, inimigo, progressão, persistência e multiplayer | entregue |
+| 0.2 | Super Saiyajin, Potencial Liberado, domínio, aura e desafios iniciais | entregue |
+| **0.3 — Visual & Combat Overhaul** | Modelo DBIL próprio, aparência editável, cabelos voxel com variante SSJ, animação procedural, HUD nova, auras em camadas, Kamehameha/Galick Gun/Masenko com carga, combo/launcher/smash/perseguição/Vanish, lock-on com troca, voo rápido, terreno opcional | entregue (ver [SESSION_REPORT_03.md](SESSION_REPORT_03.md)); falta teste manual em Android e com dois clientes |
+| 0.4 (proposta) | Beam Clash, mais formas (SSJ2), mais cabelos/roupas, sons próprios gravados, refinamento de animações a partir do feedback | antes: feedback de jogo real da 0.3 |
+| 5 | Mestres e desafios de treinamento | recompensas únicas, requisitos e confiança persistentes |
+| 6 | Namekuseijin, Majin, raça do Freeza e Androides | definições raciais isoladas, aparência por raça, testes de passivas |
+| 7 | Dragon Balls, Shenlong, Scouter e detecção/ocultação de Ki | spawn controlado, cooldown e regras de multiplayer |
+| 8 | Dimensões, Namek, planetas e Outro Mundo | transferência de dados e respawn independentes do vanilla |
+| 9 | Fusão, ataques cooperativos e bosses | simulação compartilhada com limites de entidades/custos |
 
 ## Transformações
 
-`TransformationDefinition` contém raças elegíveis, requisitos, multiplicadores, drain por tick, custo/tempo de ativação, referências de aparência, habilidades, regras de domínio, condição de desbloqueio e ramo. `Transformations` registra definições e rejeita IDs duplicados. `TransformationEligibility` consulta dados do servidor sem alterar estado. A versão 0.2 implementa Super Saiyajin e Potencial Despertado; detalhes em [TRANSFORMATIONS.md](TRANSFORMATIONS.md).
+`TransformationDefinition` contém raças elegíveis, requisitos, multiplicadores, drain por tick, custo/tempo de ativação, referências de aparência, habilidades, regras de domínio, condição de desbloqueio e ramo. `Transformations` registra definições e rejeita IDs duplicados. `TransformationEligibility` consulta dados do servidor sem alterar estado. As versões 0.2/0.3 implementam Super Saiyajin e Potencial Despertado (a 0.3 com apresentação completa); detalhes em [TRANSFORMATIONS.md](TRANSFORMATIONS.md).
 
 Os ramos futuros são independentes: clássico, divino, primal, instintivo e destruidor. O identificador de ramo não obriga uma árvore linear. O campo de condição de desbloqueio aponta a um avaliador de desafios, com extensões futuras para quests, treino ou mestres. Ele não concede unlock sozinho.
 
@@ -23,8 +24,10 @@ As formas atuais compõem modificadores temporários sobre atributos base, sem a
 
 ## Beam Clash e destruição
 
-Os tipos de técnica distinguem beams de projéteis. A milestone de beams deve introduzir segmentos, identificação do dono e resolução de interseção no servidor antes do Beam Clash. Uma entidade pequena de Ki Wave não certifica que Beam Clash está implementado. Destruição de terreno exige orçamento configurável, proteção e execução escalonada.
+A 0.3 implementou feixes reais (`KiBeamEntity`: dono, direção, comprimento, colisão no servidor) e dano ao terreno
+opcional com orçamento por evento/tick e proteções. O Beam Clash ainda **não** existe: precisa detectar dois feixes
+opostos que se cruzam, resolver o empate no servidor (carga, Ki, input) e sincronizar o ponto de choque.
 
 ## Fora do escopo atual
 
-Modelos definitivos, customização extensa, forma personalizada, Zenkai, Oozaru, caminhos divinos, absorção, fusão, Dragon Radar, viagem espacial, timeline e Outro Mundo não são recursos concluídos. Referências na arquitetura e nos dados não substituem uma implementação jogável.
+Forma personalizada, Zenkai, Oozaru, caminhos divinos, absorção, fusão, Dragon Radar, viagem espacial, timeline e Outro Mundo não são recursos concluídos. Referências na arquitetura e nos dados não substituem uma implementação jogável.

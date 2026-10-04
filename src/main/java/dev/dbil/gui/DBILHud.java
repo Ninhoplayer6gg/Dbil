@@ -210,8 +210,8 @@ public final class DBILHud {
         g.drawString(font, name, x + 28, y + 2, (alpha << 24) | 0xFFFFFF, true);
         // While preparing/holding, the server's next-use tick still includes the charge, so show the charge instead.
         boolean charging = visual.chargingTechnique() && definition.id().equals(visual.technique());
-        String detail = charging ? Component.translatable("hud.dbil.charge_percent",
-                        Math.round(visual.techniqueChargeNow(0) * 100)).getString()
+        String detail = charging ? (profile.chargeable() ? Component.translatable("hud.dbil.charge_percent",
+                        Math.round(visual.techniqueChargeNow(0) * 100)) : Component.translatable("hud.dbil.preparing")).getString()
                 : cooldown > 0 ? Component.translatable("hud.dbil.cooldown_short", (cooldown + 19) / 20).getString()
                 : Component.translatable("hud.dbil.ki_cost", Math.round(TechniqueService.kiCost(definition, data))).getString();
         g.drawString(font, detail, x + 28, y + 11, (alpha << 24) | (charging ? 0xFFE7A0 : cooldown > 0 ? 0xFF9A88 : 0x9FD8FF), false);

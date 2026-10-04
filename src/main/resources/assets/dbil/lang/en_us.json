@@ -254,6 +254,7 @@
   "hud.dbil.drain": "-%s Ki/s",
   "hud.dbil.cooldown_short": "Cooldown %ss",
   "hud.dbil.charge_percent": "Charge %s%%",
+  "hud.dbil.preparing": "Preparing",
   "hud.dbil.ki_cost": "Ki %s",
   "hud.dbil.guard_broken_short": "GUARD BROKEN",
   "hud.dbil.guard_broken_center": "GUARD BROKEN!",
