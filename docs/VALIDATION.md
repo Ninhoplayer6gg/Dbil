@@ -18,18 +18,19 @@ real roda no GitHub Actions (`.github/workflows/build.yml`, runner `ubuntu-lates
 
 ## Resultado registrado
 
-Execução de referência: GitHub Actions run #8 (commit `a089055`, 2026-10-04), repetida idêntica na run #9 (merge na
-`main`, commit `0e71830`).
+Execução de referência: GitHub Actions run #12 (commit `e8e94cd`, 2026-10-04), com os dois jobs verdes (`build` e
+`multiplayer`). A run #8 (commit `a089055`) e a run #9 (merge na `main`, `0e71830`) tiveram o mesmo resultado no job
+`build`.
 
 | Passo | Resultado |
 |---|---|
-| `./gradlew clean build` | **BUILD SUCCESSFUL** (30 s com cache); JAR `build/libs/dbil-0.3.0.jar` |
+| `./gradlew clean build` | **BUILD SUCCESSFUL** (37 s com cache); JAR `build/libs/dbil-0.3.0.jar` |
 | `./gradlew runGameTestServer` | **All 61 required tests passed** (50 da 0.2 + 11 novos da 0.3) |
-| Servidor dedicado | `Done (5.783s)!` com DBIL 0.3.0 carregado, sem erro de classe de cliente/dist |
+| Servidor dedicado | `Done (5.728s)!` com DBIL 0.3.0 carregado, sem erro de classe de cliente/dist |
 | Cliente visual (Xvfb) | **PASS**, 28 screenshots, roteiro completo sem exceção no cliente |
-| Multiplayer (servidor + 2 clientes) | em verificação (run #10: sincronização remota toda observada; falha só de orquestração do teste, corrigida) |
+| Multiplayer (servidor dedicado + 2 clientes) | **PASS** nos dois clientes (detalhes abaixo) |
 
-Marcos registrados pelo cliente na run #8: `lock-on target=237`, `charging=true`, `transforming=true`,
+Marcos registrados pelo cliente na run #8 (a #12 repetiu o roteiro, com `beam ticks observed=148`): `lock-on target=237`, `charging=true`, `transforming=true`,
 `form=dbil:super_saiyan`, `combo target=413 rival=413`, `flying=true fastFlight=true`, `after revert form=dbil:base`,
 `vanish target=480`, `guarding=true`, `beam ticks observed=162`, `kamehameha charge at shot=80%`.
 
@@ -62,6 +63,27 @@ Renderização por software (Mesa llvmpipe) em Xvfb: prova funcionamento e apar�
 - O spawn aleatório do mundo de teste caiu uma vez no oceano, onde voo e transformação são (corretamente)
   recusados; o roteiro agora constrói uma arena seca antes de começar, para ser determinístico.
 
+## Teste multiplayer (servidor dedicado + dois clientes)
+
+Job `multiplayer` do workflow: um servidor dedicado (offline, mundo plano, `allow-flight=false` padrão) e dois
+clientes gráficos em Xvfb, cada um a partir de uma cópia do projeto (`client/dev/MultiplayerAutotest`,
+`-PdbilAutotest=mp-a|mp-b`). **Alpha** cria um Saiyajin (armadura, cabelo espetado alto), carrega Ki, vira Super
+Saiyajin, dispara um Kamehameha carregado e voa. **Beta** cria um Humano (corpo B, cabelo bagunçado, gi verde),
+fica a ~7 blocos olhando para Alpha e registra o que um jogador remoto recebe e renderiza.
+
+Resultado da run #12:
+
+- Beta: `PASS: beta observed every remote state of alpha {alpha_look=39, alpha_charging=74, alpha_transforming=124,
+  alpha_super_saiyan=153, alpha_beam=232, alpha_flying=308}`, com uma screenshot do ponto de vista de Beta para cada
+  estado (Alpha com o modelo DBIL, aura de carga, transformação, SSJ, feixe e voo).
+- Alpha: `PASS: alpha sequence finished; beta appearance synced to alpha=true` (Alpha vê o visual de Beta) e
+  `alpha flying=true form=dbil:super_saiyan`.
+- O servidor registra só entradas/saídas normais: nenhum kick por voo (o anti-floating do voo DBIL funciona com
+  `allow-flight=false`) e nenhuma exceção.
+
+A primeira tentativa (run #10) já mostrou toda a sincronização funcionando; falhou só porque Beta encerrava antes do
+último passo de Alpha. O roteiro foi corrigido para Beta esperar Alpha sair.
+
 ## Cobertura dos GameTests (0.3)
 
 Além das suítes da 0.2 (persistência, migração, limites, recursos, criação, progressão, admissão de pacotes,
@@ -74,11 +96,10 @@ respeitando proteções; troca de alvo entre oponentes; loadout de 6 slots; reve
 ## Pendente (não testado nesta sessão)
 
 - **Android físico** (PojavLauncher/Battly etc.): escala da HUD, toque, FPS e memória.
-- **Dois clientes reais** no mesmo servidor: visibilidade remota de aparência, auras, feixes e animações. O código
-  sincroniza por `AppearanceSync`/`StateSnapshot`/`FxEvent` para quem rastreia a entidade, mas isso não foi
-  observado com duas instâncias gráficas.
-- Rede com latência real; compatibilidade com outros mods que adicionam camadas ao jogador (as camadas vanilla são
-  mantidas no renderer DBIL; camadas de terceiros não aparecem em personagens DBIL).
+- Multiplayer com **latência real** entre máquinas diferentes (o teste do CI roda servidor e clientes na mesma
+  máquina).
+- Compatibilidade com outros mods que adicionam camadas ao jogador (as camadas vanilla são mantidas no renderer DBIL;
+  camadas de terceiros não aparecem em personagens DBIL).
 
 ## Roteiro manual sugerido
 

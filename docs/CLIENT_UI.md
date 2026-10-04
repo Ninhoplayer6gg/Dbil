@@ -64,5 +64,5 @@ Animações procedurais: [ANIMATION.md](ANIMATION.md).
 
 PT-BR e EN-US têm as mesmas chaves (verificado no commit). O CI executa um cliente real (Xvfb, renderização por
 software) que percorre criação, HUD, lock-on, aura, transformação, Kamehameha, combo, voo rápido, editor de
-aparência, menu e primeira pessoa, com screenshots; veja [VALIDATION.md](VALIDATION.md). Android real e dois
-clientes simultâneos ainda precisam de teste manual.
+aparência, menu e primeira pessoa, com screenshots, e um teste multiplayer com servidor dedicado e dois clientes;
+veja [VALIDATION.md](VALIDATION.md). Android real ainda precisa de teste manual.

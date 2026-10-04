@@ -6,7 +6,7 @@ O personagem do jogador continua protagonista. Personagens conhecidos entram com
 |---|---|---|
 | Fundação (0.1) | Criação, recursos, voo, combate, Ki Wave, inimigo, progressão, persistência e multiplayer | entregue |
 | 0.2 | Super Saiyajin, Potencial Liberado, domínio, aura e desafios iniciais | entregue |
-| **0.3 — Visual & Combat Overhaul** | Modelo DBIL próprio, aparência editável, cabelos voxel com variante SSJ, animação procedural, HUD nova, auras em camadas, Kamehameha/Galick Gun/Masenko com carga, combo/launcher/smash/perseguição/Vanish, lock-on com troca, voo rápido, terreno opcional | entregue (ver [SESSION_REPORT_03.md](SESSION_REPORT_03.md)); falta teste manual em Android e com dois clientes |
+| **0.3 — Visual & Combat Overhaul** | Modelo DBIL próprio, aparência editável, cabelos voxel com variante SSJ, animação procedural, HUD nova, auras em camadas, Kamehameha/Galick Gun/Masenko com carga, combo/launcher/smash/perseguição/Vanish, lock-on com troca, voo rápido, terreno opcional | entregue (ver [SESSION_REPORT_03.md](SESSION_REPORT_03.md)); falta teste manual em Android |
 | 0.4 (proposta) | Beam Clash, mais formas (SSJ2), mais cabelos/roupas, sons próprios gravados, refinamento de animações a partir do feedback | antes: feedback de jogo real da 0.3 |
 | 5 | Mestres e desafios de treinamento | recompensas únicas, requisitos e confiança persistentes |
 | 6 | Namekuseijin, Majin, raça do Freeza e Androides | definições raciais isoladas, aparência por raça, testes de passivas |

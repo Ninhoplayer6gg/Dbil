@@ -89,4 +89,4 @@ All GUI/render/animation subscribers are Dist.CLIENT. R/G/X/C/V/J remain; 0.3 ad
 
 `/dbil info` is public for self; administrative mutations/diagnostics require permission 2. Current commands also include registered form unlock/transform/mastery. No raw NBT mutation is accepted. See DEBUG_COMMANDS.md.
 
-GameTests run explicitly in dedicated logical-server mode; CI also boots a dedicated server and runs a scripted Xvfb client (`client/dev/ClientAutotest`, `-PdbilAutotest=true`). Results are recorded in docs/VALIDATION.md; real multiplayer with two clients and Android hardware still require separate evidence.
+GameTests run explicitly in dedicated logical-server mode; CI also boots a dedicated server and runs a scripted Xvfb client (`client/dev/ClientAutotest`, `-PdbilAutotest=true`). A second CI job runs a dedicated server with two scripted graphical clients (`client/dev/MultiplayerAutotest`). Results are recorded in docs/VALIDATION.md; Android hardware still requires separate evidence.

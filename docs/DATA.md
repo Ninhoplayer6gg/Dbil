@@ -156,8 +156,7 @@ lógica dentro da classe Player. As formas registradas compõem multiplicadores 
 
 ## Validação
 
-Os GameTests do projeto exercitam save/load, migração, limites e economia de
-recursos. A execução bem-sucedida, quando disponível, deve ser registrada no
-relatório de validação; a presença deste documento não significa que os testes
-foram executados. Persistência entre sessões e sincronização de dois clientes
-precisam também da execução dedicada e do checklist manual de multiplayer.
+Os GameTests do projeto exercitam save/load, migração (incluindo 3→4 com a
+aparência), limites e economia de recursos. Os resultados executados estão em
+[VALIDATION.md](VALIDATION.md); a sincronização da aparência entre dois clientes
+foi verificada pelo teste multiplayer do CI.

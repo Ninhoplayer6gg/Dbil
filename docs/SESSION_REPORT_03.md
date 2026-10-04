@@ -113,7 +113,7 @@ Os da 0.2 + `/dbil learnall [jogador]` e `/dbil appearance default [jogador]` (p
 
 ## 9. Build e testes executados
 
-Todos executados de verdade no GitHub Actions (o ambiente desta sessão não alcança o Maven do Forge; ver
+Todos executados de verdade no GitHub Actions (referência: run #12, commit `e8e94cd`, os dois jobs verdes) (o ambiente desta sessão não alcança o Maven do Forge; ver
 [VALIDATION.md](VALIDATION.md)):
 
 - `./gradlew clean build`: **BUILD SUCCESSFUL**; JAR em `build/libs/dbil-0.3.0.jar` (artefato `dbil-jar` de cada run).
@@ -121,7 +121,9 @@ Todos executados de verdade no GitHub Actions (o ambiente desta sessão não alc
 - Servidor dedicado: sobe até `Done (...)` com o DBIL 0.3.0, sem erro de classe de cliente.
 - Cliente visual (Xvfb, renderização por software): **PASS**, 28 screenshots cobrindo modelo, HUD, lock-on, aura,
   transformação, SSJ, os três feixes, Ki Barrage, combo, Vanish, guarda, voo rápido, editor, menu e primeira pessoa.
-- Multiplayer (servidor dedicado + 2 clientes gráficos): em verificação no CI (a primeira execução mostrou toda a sincronização remota funcionando; ver VALIDATION.md).
+- Multiplayer (servidor dedicado + 2 clientes gráficos): **PASS** nos dois clientes. Beta viu, como jogador remoto,
+  a aparência de Alpha, a carga de Ki, a transformação, o Super Saiyajin, o Kamehameha e o voo (screenshots do ponto
+  de vista de Beta); Alpha viu a aparência de Beta; nenhum kick por voo com `allow-flight=false`.
 - Problemas reais encontrados pelos testes visuais e corrigidos: reverter forma na água/montado; cabelo SSJ de
   costas; rótulo de carga na HUD; dica do menu sobre o botão; partículas da preparação humana.
 
@@ -146,4 +148,4 @@ tick; nada visual roda no servidor. Recomendado para Android: aura LOW, partícu
 ## 12. Pendente / próximos passos
 
 Beam Clash; SSJ2 e outras formas; mais estilos de cabelo/roupas; sons próprios gravados; teste e ajuste em Android
-e com dois clientes; refinamento de animações com feedback de jogo.
+e em multiplayer com latência real; refinamento de animações com feedback de jogo.
