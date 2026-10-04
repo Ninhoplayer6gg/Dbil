@@ -144,7 +144,7 @@ public final class ChallengeGameTests {
     public static void fullEquippedSlotsKeepRewardPendingWithoutPartialUnlock(GameTestHelper helper) {
         ServerPlayer player = player(helper, Races.HUMAN, 1);
         CharacterData data = CharacterCapability.get(player);
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < CharacterData.MAX_EQUIPPED; i++) {
             ResourceLocation technique = DBIL.id("slot_fixture_" + i);
             data.learn(technique);
             data.equip(technique);

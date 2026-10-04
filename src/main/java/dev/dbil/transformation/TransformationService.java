@@ -4,6 +4,9 @@ import dev.dbil.capability.CharacterCapability;
 import dev.dbil.character.CharacterData;
 import dev.dbil.character.CharacterService;
 import dev.dbil.config.ServerConfig;
+import dev.dbil.fx.FxService;
+import dev.dbil.fx.FxType;
+import dev.dbil.registry.ModSounds;
 import dev.dbil.ki.KiService;
 import dev.dbil.network.Network;
 import dev.dbil.power.PowerLevelCalculator;
@@ -54,12 +57,13 @@ public final class TransformationService {
         state.pendingTransformation = id;
         double mastery = data.mastery().getOrDefault(id, 0.0);
         state.transformationChargeTicks = Math.max(1, definition.mastery().activationTicks(definition.activationTicks(), mastery));
+        state.transformationTotalTicks = state.transformationChargeTicks;
         state.transformationStartHealth = player.getHealth();
         state.transformationStartPosition = player.position();
         state.nextTransformationTick = now + state.transformationChargeTicks + ACTIVATION_COOLDOWN;
         player.setSprinting(false);
-        player.level().playSound(null, player.blockPosition(), SoundEvents.AMETHYST_BLOCK_RESONATE,
-                SoundSource.PLAYERS, 0.6F, 0.7F);
+        player.level().playSound(null, player.blockPosition(), ModSounds.TRANSFORM_CHARGE.get(),
+                SoundSource.PLAYERS, 0.8F, 0.9F + (float) (mastery / Math.max(1, definition.mastery().maximum())) * 0.3F);
         updatePower(player, data, state);
         Network.sync(player);
         return TransformationEligibility.Result.READY;
@@ -92,8 +96,12 @@ public final class TransformationService {
                 state.lastTransformationCombatTick = now;
                 CharacterService.applyAttributes(player, data);
                 updatePower(player, data, state);
-                player.level().playSound(null, player.blockPosition(), SoundEvents.PLAYER_LEVELUP,
-                        SoundSource.PLAYERS, 0.7F, 0.7F);
+                player.level().playSound(null, player.blockPosition(), ModSounds.TRANSFORM_COMPLETE.get(),
+                        SoundSource.PLAYERS, 1.0F, 1.0F);
+                FxService.entity(player, FxType.TRANSFORM_COMPLETE, 0, -1,
+                        (float) (data.mastery().getOrDefault(pending.id(), 0.0) / Math.max(1, pending.mastery().maximum())),
+                        formColor(pending.id()));
+                state.markCombat(now);
                 Network.sync(player);
             }
         }
@@ -127,6 +135,10 @@ public final class TransformationService {
         CharacterData data = CharacterCapability.get(player);
         PlayerState state = ServerRuntime.state(player);
         cancelCharge(state);
+        if (!CharacterData.BASE_FORM.equals(data.currentTransformation()) && player.isAlive()) {
+            FxService.entity(player, FxType.TRANSFORM_REVERT, 0, -1, 0, formColor(data.currentTransformation()));
+            player.level().playSound(null, player.blockPosition(), ModSounds.TRANSFORM_REVERT.get(), SoundSource.PLAYERS, 0.7F, 1.0F);
+        }
         data.setTransformation(CharacterData.BASE_FORM);
         CharacterService.applyAttributes(player, data);
         updatePower(player, data, state);
@@ -153,6 +165,25 @@ public final class TransformationService {
         if (now - state.lastTransformationCombatTick < COMBAT_MASTERY_INTERVAL) return;
         state.lastTransformationCombatTick = now;
         addMastery(data, active, active.mastery().gainPerUse() * 1.6);
+    }
+
+    /** Signature aura color used by server-side presentation events. */
+    public static int formColor(ResourceLocation id) {
+        if (Transformations.SUPER_SAIYAN.equals(id)) return 0xFFD54A;
+        if (Transformations.POTENTIAL_UNLEASHED.equals(id)) return 0xEAF4FF;
+        return 0x8FD8FF;
+    }
+
+    /** 0..1 mastery of the active form; 1 in base form so callers can treat "no form" as fully controlled. */
+    public static double masteryFraction(CharacterData data) {
+        TransformationDefinition active = activeDefinition(data);
+        if (active == null) return 1.0;
+        return Math.max(0, Math.min(1, data.mastery().getOrDefault(active.id(), 0.0) / active.mastery().maximum()));
+    }
+
+    /** Low mastery means worse Ki control: techniques cost up to 25% more until the form is mastered. */
+    public static double controlPenalty(CharacterData data) {
+        return 1.0 + 0.25 * (1.0 - masteryFraction(data));
     }
 
     public static double multiplier(CharacterData data, Stat stat) {
@@ -191,6 +222,7 @@ public final class TransformationService {
     private static void cancelCharge(PlayerState state) {
         state.pendingTransformation = null;
         state.transformationChargeTicks = 0;
+        state.transformationTotalTicks = 0;
         state.transformationStartPosition = null;
         state.transformationStartHealth = 0;
     }

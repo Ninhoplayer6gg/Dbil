@@ -1,5 +1,6 @@
 package dev.dbil.character;
 
+import dev.dbil.appearance.CharacterAppearance;
 import dev.dbil.capability.CharacterCapability;
 import dev.dbil.power.PowerLevelCalculator;
 import dev.dbil.race.RaceDefinition;
@@ -24,6 +25,12 @@ public final class CharacterService {
 
     public static boolean create(ServerPlayer player, String name, ResourceLocation raceId,
                                  ResourceLocation originId, String styleId) {
+        return create(player, name, raceId, originId, styleId, null);
+    }
+
+    /** A null appearance uses the race default; any supplied look has already been clamped by its record. */
+    public static boolean create(ServerPlayer player, String name, ResourceLocation raceId,
+                                 ResourceLocation originId, String styleId, CharacterAppearance appearance) {
         CharacterData data = CharacterCapability.get(player);
         if (!data.compatibleSchema() || data.created() || player.isSpectator() || !player.isAlive() || name == null
                 || name.length() > 96) return false;
@@ -34,11 +41,19 @@ public final class CharacterService {
         OriginDefinition origin = Origins.get(originId);
         CombatStyle style = CombatStyle.get(styleId);
         if (race == null || origin == null || !origin.allows(raceId) || style == null) return false;
-        data.initialize(checkedName, race, origin, style);
+        data.initialize(checkedName, race, origin, style,
+                appearance == null ? CharacterAppearance.defaultFor(raceId) : appearance);
         applyAttributes(player, data);
         player.setHealth(player.getMaxHealth());
         PowerLevelCalculator.update(data, 1.0, false, false);
         return true;
+    }
+
+    /** Cosmetic edits after creation: no cost, but only for living created characters. */
+    public static boolean updateAppearance(ServerPlayer player, CharacterAppearance appearance) {
+        CharacterData data = CharacterCapability.get(player);
+        if (appearance == null || !data.created() || !player.isAlive() || player.isSpectator()) return false;
+        return data.setAppearance(appearance);
     }
 
     public static void applyAttributes(ServerPlayer player, CharacterData data) {

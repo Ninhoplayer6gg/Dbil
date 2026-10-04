@@ -7,6 +7,7 @@ import dev.dbil.transformation.TransformationService;
 import dev.dbil.training.TrainingSessionService;
 import dev.dbil.flight.FlightService;
 import dev.dbil.movement.DashService;
+import dev.dbil.movement.VanishService;
 import dev.dbil.network.Network;
 import dev.dbil.targeting.TargetingService;
 import dev.dbil.technique.TechniqueService;
@@ -22,17 +23,26 @@ public final class ServerActions {
         if (!state.admitAction(now) || !data.created() || !player.isAlive() || player.isSpectator()) return;
         switch (action) {
             case CHARGE_START -> {
-                if (!state.flying && !state.techniqueCharging && !state.guarding && state.transformationChargeTicks <= 0 && !player.isPassenger()) {
+                if (!state.techniqueCharging && state.activeBeamId < 0 && !state.guarding && state.transformationChargeTicks <= 0 && !player.isPassenger()) {
                     state.charging = true; state.chargeHeartbeatTick = now;
                 }
             }
             case CHARGE_STOP -> state.charging = false;
             case FLIGHT_TOGGLE -> { if (state.transformationChargeTicks <= 0) FlightService.toggle(player, data, state); }
             case DASH -> { if (!state.guarding && state.transformationChargeTicks <= 0) DashService.dash(player, data, state); }
-            case LIGHT -> CombatService.attack(player, false);
-            case HEAVY -> CombatService.attack(player, true);
+            case DASH_LEFT -> { if (!state.guarding && state.transformationChargeTicks <= 0) DashService.dash(player, data, state, DashService.Direction.LEFT); }
+            case DASH_RIGHT -> { if (!state.guarding && state.transformationChargeTicks <= 0) DashService.dash(player, data, state, DashService.Direction.RIGHT); }
+            case DASH_BACK -> { if (!state.guarding && state.transformationChargeTicks <= 0) DashService.dash(player, data, state, DashService.Direction.BACK); }
+            case LIGHT -> CombatService.attack(player, CombatService.MeleeKind.LIGHT);
+            case HEAVY -> CombatService.attack(player, CombatService.MeleeKind.HEAVY);
+            case LAUNCHER -> CombatService.attack(player, CombatService.MeleeKind.LAUNCHER);
+            case SMASH -> CombatService.attack(player, CombatService.MeleeKind.SMASH);
             case TECHNIQUE -> { state.charging = false; TechniqueService.start(player); }
+            case TECHNIQUE_HOLD -> { state.charging = false; TechniqueService.startHold(player); }
+            case TECHNIQUE_RELEASE -> TechniqueService.release(player);
+            case VANISH -> VanishService.vanish(player, data, state);
             case LOCK_ON -> TargetingService.toggle(player);
+            case TARGET_NEXT -> TargetingService.cycle(player);
             case GUARD_START -> GuardService.start(player, data, state);
             case GUARD_STOP -> GuardService.stop(player);
             case TRANSFORM_REVERT -> TransformationService.revert(player);

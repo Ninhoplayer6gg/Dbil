@@ -8,6 +8,8 @@ import dev.dbil.network.Network;
 import dev.dbil.race.Races;
 import dev.dbil.registry.ModEntities;
 import dev.dbil.registry.ModItems;
+import dev.dbil.registry.ModParticles;
+import dev.dbil.registry.ModSounds;
 import dev.dbil.technique.Techniques;
 import dev.dbil.transformation.Transformations;
 import dev.dbil.training.TrainingChallenges;
@@ -27,6 +29,8 @@ public final class DBIL {
         bus.addListener(CharacterCapability::register);
         ModEntities.register(bus);
         ModItems.register(bus);
+        ModSounds.register(bus);
+        ModParticles.register(bus);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC);
         Races.bootstrap();
@@ -34,7 +38,7 @@ public final class DBIL {
         Transformations.bootstrap();
         TrainingChallenges.bootstrap();
         Network.register();
-        LOGGER.info("DBIL 0.2.0: continuous flight, combat and training systems initialized");
+        LOGGER.info("DBIL 0.3.0: visual and combat overhaul initialized");
     }
     public static ResourceLocation id(String path) { return new ResourceLocation(MOD_ID, path); }
 }

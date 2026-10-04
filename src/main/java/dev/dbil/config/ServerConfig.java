@@ -9,7 +9,10 @@ public final class ServerConfig {
     public static final ForgeConfigSpec.DoubleValue xpMultiplier, damageMultiplier, kiRegen, kiCharge,
             staminaRegen, flightKiCost, dashKiCost, dashStaminaCost, maxFlightSpeed, techniqueKiCostMultiplier, npcDifficulty, kiBlastCost, kiBarrageCost,
             guardDamageReduction, guardStaminaPerDamage, transformationCostMultiplier, transformationDrainMultiplier;
-    public static final ForgeConfigSpec.BooleanValue pvp;
+    public static final ForgeConfigSpec.BooleanValue pvp, terrainDamage, terrainDropBlocks, terrainProtectBlockEntities;
+    public static final ForgeConfigSpec.IntValue terrainMaxBlocks, vanishCooldownTicks;
+    public static final ForgeConfigSpec.DoubleValue terrainMaxResistance, terrainMinCharge, vanishStaminaCost, vanishRange,
+            chaseStaminaCost, chaseRange, maxFastFlightSpeed, fastFlightKiMultiplier;
     static {
         var b = new ForgeConfigSpec.Builder();
         b.push("limits");
@@ -41,6 +44,21 @@ public final class ServerConfig {
         guardDamageReduction = b.defineInRange("guardDamageReduction", 0.70, 0.0, 0.90);
         guardStaminaPerDamage = b.defineInRange("guardStaminaPerDamage", 2.0, 0.5, 10.0);
         guardBreakTicks = b.defineInRange("guardBreakTicks", 35, 10, 100);
+        vanishStaminaCost = b.defineInRange("vanishStaminaCost", 20.0, 1.0, 100.0);
+        vanishCooldownTicks = b.defineInRange("vanishCooldownTicks", 50, 10, 400);
+        vanishRange = b.comment("Maximum distance to the locked target for Vanish.").defineInRange("vanishRange", 12.0, 3.0, 32.0);
+        chaseStaminaCost = b.defineInRange("chaseStaminaCost", 10.0, 0.0, 100.0);
+        chaseRange = b.comment("Maximum distance covered by a chase after a launcher, smash or finisher.").defineInRange("chaseRange", 18.0, 4.0, 32.0);
+        b.pop().push("flight");
+        maxFastFlightSpeed = b.comment("Fast flight (sprint while flying) speed cap in blocks per tick.").defineInRange("maxFastFlightSpeed", 1.35, 0.3, 1.5);
+        fastFlightKiMultiplier = b.defineInRange("fastFlightKiMultiplier", 3.0, 1.0, 10.0);
+        b.pop().push("terrain");
+        terrainDamage = b.comment("Optional crater damage from strong energy impacts. Off by default.").define("terrainDamage", false);
+        terrainMaxBlocks = b.comment("Upper bound of blocks removed by one impact.").defineInRange("terrainMaxBlocks", 24, 0, 128);
+        terrainDropBlocks = b.define("terrainDropBlocks", false);
+        terrainProtectBlockEntities = b.comment("Keep chests, furnaces and every other block entity intact.").define("terrainProtectBlockEntities", true);
+        terrainMaxResistance = b.comment("Blocks with higher blast resistance are kept (stone = 6, obsidian = 1200).").defineInRange("terrainMaxResistance", 6.0, 0.0, 3600.0);
+        terrainMinCharge = b.comment("Minimum technique charge fraction (0-1) that can damage terrain.").defineInRange("terrainMinCharge", 0.6, 0.0, 1.0);
         b.pop().push("transformations");
         transformationCostMultiplier = b.defineInRange("costMultiplier", 1.0, 0.1, 5.0);
         transformationDrainMultiplier = b.defineInRange("drainMultiplier", 1.0, 0.1, 5.0);

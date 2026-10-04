@@ -12,7 +12,8 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 public final class KiService {
     private static final UUID CHARGE_SLOW = UUID.fromString("e60bebef-5b5e-4895-b4ee-31f7f8e5e81");
     public static void tick(ServerPlayer player, CharacterData data, PlayerState state) {
-        if (state.charging && !state.flying && !state.techniqueCharging && !state.guarding && state.transformationChargeTicks <= 0) {
+        // 0.3: powering up also works while hovering; flight upkeep is still paid separately.
+        if (state.charging && !state.techniqueCharging && !state.guarding && state.transformationChargeTicks <= 0) {
             data.addKi(ServerConfig.kiCharge.get() * (1 + Math.min(0.5, data.stat(Stat.KI_CONTROL) / 100)));
             player.setSprinting(false);
         } else if (!state.flying && !state.techniqueCharging && state.transformationChargeTicks <= 0 && player.tickCount % 2 == 0) {

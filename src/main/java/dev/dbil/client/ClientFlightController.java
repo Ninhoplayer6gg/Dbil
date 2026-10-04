@@ -21,7 +21,7 @@ public final class ClientFlightController {
     private static long lastAckTick = Long.MIN_VALUE;
     private static LocalPlayer trackedPlayer;
     private static boolean serverFlying;
-    private static double maximumSpeed = 0.32;
+    private static double maximumSpeed = 0.32, fastSpeed = 0.6;
     private static Vec3 velocity = Vec3.ZERO;
     private static Vec3 correction = Vec3.ZERO;
 
@@ -50,6 +50,11 @@ public final class ClientFlightController {
         minecraft.player.setSprinting(false);
     }
 
+    /** Presentation helpers for camera FOV, speed lines and flight poses. */
+    public static Vec3 velocity() { return velocity; }
+    public static double cruiseSpeed() { return maximumSpeed; }
+    public static double fastCruiseSpeed() { return fastSpeed; }
+
     public static boolean active() {
         Minecraft minecraft = Minecraft.getInstance();
         return serverFlying && minecraft.player != null && minecraft.player == trackedPlayer
@@ -70,7 +75,7 @@ public final class ClientFlightController {
     public static void afterTick(LocalPlayer player) {
         if (!active()) return;
         FlightMotion.Input input = ClientControls.flightInput(Minecraft.getInstance());
-        Vec3 requested = FlightMotion.nextVelocity(velocity, input, maximumSpeed);
+        Vec3 requested = FlightMotion.nextVelocity(velocity, input, input.fast() ? fastSpeed : maximumSpeed);
         Vec3 start = player.position();
         player.setNoGravity(true);
         player.setOnGround(false);
@@ -100,16 +105,18 @@ public final class ClientFlightController {
 
     /** Called by the owner-only S2C packet, on the client game thread. No character resource is modified. */
     public static void acceptAck(long serverTick, int sequence, int inputTicks, Vec3 position, Vec3 motion,
-                                 double speed, boolean flying, boolean hardReset) {
+                                 double speed, double fast, boolean flying, boolean hardReset) {
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = minecraft.player;
         if (trackedPlayer != null && trackedPlayer != player) reset();
         if (player == null || !FlightMotion.finite(position) || !FlightMotion.finite(motion)
-                || !Double.isFinite(speed) || speed < 0.1 || speed > 1.5 || sequence < 0 || inputTicks < 0
+                || !Double.isFinite(speed) || speed < 0.02 || speed > 1.5 || !Double.isFinite(fast) || fast < 0.02 || fast > 1.5
+                || sequence < 0 || inputTicks < 0
                 || serverTick < lastAckTick) return;
         lastAckTick = serverTick;
         trackedPlayer = player;
         maximumSpeed = speed;
+        fastSpeed = fast;
         serverFlying = flying;
         if (!flying) {
             clearHistory();
@@ -133,7 +140,8 @@ public final class ClientFlightController {
         if (!hardReset) {
             for (int i = 0; i < count; i++) {
                 Frame frame = HISTORY[(head + i) % HISTORY_SIZE];
-                Vec3 requested = FlightMotion.nextVelocity(targetVelocity, frame.input(), maximumSpeed);
+                Vec3 requested = FlightMotion.nextVelocity(targetVelocity, frame.input(),
+                        frame.input().fast() ? fastSpeed : maximumSpeed);
                 Vec3 actual = FlightMotion.replayMovement(player, targetPosition, requested);
                 targetPosition = targetPosition.add(actual);
                 targetVelocity = FlightMotion.afterCollision(requested, actual);
@@ -175,6 +183,7 @@ public final class ClientFlightController {
         trackedPlayer = null;
         serverFlying = false;
         maximumSpeed = 0.32;
+        fastSpeed = 0.6;
         velocity = correction = Vec3.ZERO;
     }
 }

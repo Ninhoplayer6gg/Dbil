@@ -62,7 +62,7 @@ public final class UpgradeGameTests {
                 && data.trainingStats().get("ki_wave_casts") == 70 && data.storyFlags().contains("private_story"),
                 "Old mastery, counters and story flags must be preserved");
         helper.assertTrue(data.selectedTechnique().equals(DBIL.id("ki_wave"))
-                && data.schemaVersion() == 3, "Upgrade initializes the new selected-technique channel");
+                && data.schemaVersion() == CharacterData.SCHEMA_VERSION, "Upgrade initializes the new selected-technique channel");
         helper.succeed();
     }
 }

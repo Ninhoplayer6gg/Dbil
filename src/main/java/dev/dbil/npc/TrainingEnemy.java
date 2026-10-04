@@ -27,6 +27,7 @@ import net.minecraft.world.level.Level;
 public final class TrainingEnemy extends PathfinderMob {
     public static final int EXPERIENCE_REWARD = NpcDefinitions.TRAINING_ENEMY.experienceReward();
     private boolean rewarded;
+    private int stunTicks;
 
     public TrainingEnemy(EntityType<? extends TrainingEnemy> type, Level level) {
         super(type, level);
@@ -57,6 +58,23 @@ public final class TrainingEnemy extends PathfinderMob {
                         .map(CharacterData::created).orElse(false)));
     }
 
+    /** Brief hit-stun keeps DBIL combos readable; it only pauses navigation and the NPC's own attacks. */
+    public void stun(int ticks) {
+        stunTicks = Math.max(stunTicks, Math.min(40, ticks));
+        getNavigation().stop();
+    }
+
+    public boolean stunned() { return stunTicks > 0; }
+
+    @Override
+    public void aiStep() {
+        if (stunTicks > 0 && !level().isClientSide) {
+            stunTicks--;
+            getNavigation().stop();
+        }
+        super.aiStep();
+    }
+
     public long getPowerLevel() {
         return Math.round(getMaxHealth() * 12.0 + getAttributeValue(Attributes.ATTACK_DAMAGE) * 100
                 + getAttributeValue(Attributes.MOVEMENT_SPEED) * 500);
@@ -64,8 +82,15 @@ public final class TrainingEnemy extends PathfinderMob {
 
     @Override
     public boolean doHurtTarget(Entity entity) {
-        return entity instanceof LivingEntity living
+        if (stunTicks > 0) return false;
+        boolean hit = entity instanceof LivingEntity living
                 && CombatService.npcAttack(this, living, (float) getAttributeValue(Attributes.ATTACK_DAMAGE));
+        if (hit) {
+            dev.dbil.fx.FxService.entity(this, dev.dbil.fx.FxType.MELEE_SWING, getRandom().nextInt(3), -1, 0, 0);
+            dev.dbil.fx.FxService.entityAt(entity, dev.dbil.fx.FxType.HIT, 1, getId(), 0.28F,
+                    entity.getBoundingBox().getCenter(), 0xFFE0C0);
+        }
+        return hit;
     }
 
     @Override

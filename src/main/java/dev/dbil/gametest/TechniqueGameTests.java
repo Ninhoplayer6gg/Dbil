@@ -59,7 +59,7 @@ public final class TechniqueGameTests {
     }
 
     @GameTest(template = "empty", batch = "dbil_techniques")
-    public static void barragePaysOnceAndSpawnsExactlyThreeProjectiles(GameTestHelper helper) {
+    public static void barragePaysOnceAndSpawnsBoundedProjectiles(GameTestHelper helper) {
         ServerPlayer player = player(helper);
         CharacterData data = CharacterCapability.get(player);
         PlayerState state = ServerRuntime.state(player);
@@ -88,7 +88,8 @@ public final class TechniqueGameTests {
             for (int tick = 0; tick < duration + 10; tick++) TechniqueService.tick(player, data, state);
             long count = player.level().getEntitiesOfClass(KiWaveEntity.class,
                             player.getBoundingBox().inflate(4), entity -> entity.getOwner() == player).size();
-            helper.assertTrue(count == 3, "One barrage must create exactly three energy entities");
+            helper.assertTrue(count == definition.projectiles().count(),
+                    "One barrage must create exactly the definition's bounded number of energy entities");
             helper.assertTrue(data.ki() == paidKi && state.barrageRemaining == 0 && !state.techniqueCharging,
                     "The completed pattern must not consume additional Ki or remain active");
             helper.assertTrue(Math.abs(data.mastery().getOrDefault(Techniques.KI_BARRAGE, 0.0) - 0.05) < 1.0e-6,

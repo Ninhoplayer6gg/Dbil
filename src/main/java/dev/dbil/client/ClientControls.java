@@ -8,12 +8,13 @@ import net.minecraft.client.player.Input;
 
 /** Touch-menu and launcher-injected controls share the same bounded server intents. */
 public final class ClientControls {
-    public static boolean touchCharging, touchGuarding;
+    public static boolean touchCharging, touchGuarding, touchFast;
     public static boolean forward, backward, left, right, ascend, descend;
     private static boolean sentCharging, sentGuarding;
     private static int inputTicks, chargeHeartbeat, guardHeartbeat, sequence;
     private static float lastForward, lastStrafe;
-    private static boolean lastAscend, lastDescend;
+    private static boolean lastAscend, lastDescend, lastFast;
+    private static float lastPitch;
     private static float capturedForward, capturedStrafe;
     private static boolean capturedAscend, capturedDescend;
     private static int capturedTick = -1;
@@ -41,7 +42,9 @@ public final class ClientControls {
         float s = keyboardStrafe + (left ? 1 : 0) - (right ? 1 : 0);
         boolean up = ascend || keyboard && (fresh ? capturedAscend : minecraft.options.keyJump.isDown());
         boolean down = descend || keyboard && (fresh ? capturedDescend : minecraft.options.keyShift.isDown());
-        return new FlightMotion.Input(f, s, up, down, minecraft.player == null ? 0 : minecraft.player.getYRot());
+        boolean fast = touchFast || keyboard && minecraft.options.keySprint.isDown();
+        return new FlightMotion.Input(f, s, up, down, minecraft.player == null ? 0 : minecraft.player.getYRot(),
+                minecraft.player == null ? 0 : minecraft.player.getXRot(), fast);
     }
 
     public static void tick(Minecraft minecraft) {
@@ -73,20 +76,22 @@ public final class ClientControls {
         FlightMotion.Input input = flightInput(minecraft);
         float pitch = minecraft.player.getXRot();
         boolean changed = input.forward() != lastForward || input.strafe() != lastStrafe
-                || input.ascend() != lastAscend || input.descend() != lastDescend;
+                || input.ascend() != lastAscend || input.descend() != lastDescend || input.fast() != lastFast
+                || input.fast() && Math.abs(pitch - lastPitch) > 3;
         if (changed || ++inputTicks >= 4) {
             inputTicks = 0;
             int next = ++sequence;
             if (next <= 0) { sequence = next = 1; }
-            Network.sendFlightInput(next, input.forward(), input.strafe(), input.ascend(), input.descend(), input.yaw(), pitch);
+            Network.sendFlightInput(next, input.forward(), input.strafe(), input.ascend(), input.descend(), input.yaw(), pitch, input.fast());
             ClientFlightController.inputSent(next);
             lastForward = input.forward(); lastStrafe = input.strafe();
             lastAscend = input.ascend(); lastDescend = input.descend();
+            lastFast = input.fast(); lastPitch = pitch;
         }
     }
 
     public static void clearTouchMovement() {
-        forward = backward = left = right = ascend = descend = false;
+        forward = backward = left = right = ascend = descend = touchFast = false;
     }
 
     public static void stopAll() {
@@ -102,7 +107,8 @@ public final class ClientControls {
         sentCharging = sentGuarding = false;
         inputTicks = chargeHeartbeat = guardHeartbeat = sequence = 0;
         lastForward = lastStrafe = capturedForward = capturedStrafe = 0;
-        lastAscend = lastDescend = capturedAscend = capturedDescend = false;
+        lastAscend = lastDescend = capturedAscend = capturedDescend = lastFast = false;
+        lastPitch = 0;
         capturedTick = -1;
     }
 }

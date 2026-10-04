@@ -2,6 +2,7 @@ package dev.dbil.registry;
 
 import dev.dbil.DBIL;
 import dev.dbil.npc.TrainingEnemy;
+import dev.dbil.technique.KiBeamEntity;
 import dev.dbil.technique.KiWaveEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -26,6 +27,11 @@ public final class ModEntities {
             "ki_wave", () -> EntityType.Builder.<KiWaveEntity>of(KiWaveEntity::new, MobCategory.MISC)
                     .sized(0.35F, 0.35F).clientTrackingRange(8).updateInterval(2)
                     .build(DBIL.id("ki_wave").toString()));
+
+    public static final RegistryObject<EntityType<KiBeamEntity>> KI_BEAM = ENTITIES.register(
+            "ki_beam", () -> EntityType.Builder.<KiBeamEntity>of(KiBeamEntity::new, MobCategory.MISC)
+                    .sized(0.5F, 0.5F).clientTrackingRange(10).updateInterval(1).noSave().fireImmune()
+                    .build(DBIL.id("ki_beam").toString()));
 
     private ModEntities() { }
 

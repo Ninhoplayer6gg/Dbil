@@ -1,6 +1,7 @@
 package dev.dbil.character;
 
 import dev.dbil.DBIL;
+import dev.dbil.appearance.CharacterAppearance;
 import dev.dbil.config.ServerConfig;
 import dev.dbil.race.RaceDefinition;
 import dev.dbil.race.Races;
@@ -23,7 +24,9 @@ import java.util.Set;
  * All deserialization and resource mutations are bounded, including non-finite doubles and collection sizes.
  */
 public final class CharacterData {
-    public static final int SCHEMA_VERSION = 3;
+    public static final int SCHEMA_VERSION = 4;
+    /** Loadout size. 0.2 used four slots; 0.3 adds beams, so six slots keep every starter technique equipped. */
+    public static final int MAX_EQUIPPED = 6;
     public static final ResourceLocation BASE_FORM = new ResourceLocation("dbil", "base");
     private static final int MAX_DEFINITIONS = 128;
     private static final long MAX_EXPERIENCE = 10_000_000L;
@@ -57,6 +60,7 @@ public final class CharacterData {
     private double stamina;
     private ResourceLocation transformation = BASE_FORM;
     private ResourceLocation selectedTechnique = new ResourceLocation("dbil", "ki_wave");
+    private CharacterAppearance appearance = CharacterAppearance.HUMAN_DEFAULT;
 
     public CharacterData() { reset(); }
 
@@ -84,6 +88,14 @@ public final class CharacterData {
     public ResourceLocation selectedTechnique() { return selectedTechnique; }
     public Map<String, Double> trainingStats() { return trainingStatsView; }
     public Set<String> storyFlags() { return storyFlagsView; }
+    public CharacterAppearance appearance() { return appearance; }
+
+    /** Cosmetic only; the race filter removes traits such as the tail from races that do not have them. */
+    public boolean setAppearance(CharacterAppearance value) {
+        if (!compatibleSchema() || value == null) return false;
+        appearance = value.forRace(race);
+        return true;
+    }
 
     public void setStat(Stat stat, double value) {
         if (!compatibleSchema()) return;
@@ -119,8 +131,15 @@ public final class CharacterData {
     }
     public boolean equip(ResourceLocation technique) {
         if (!compatibleSchema() || technique == null || !unlockedTechniques.contains(technique)
-                || equippedTechniques.size() >= 4 || !equippedTechniques.add(technique)) return false;
+                || equippedTechniques.size() >= MAX_EQUIPPED || !equippedTechniques.add(technique)) return false;
         if (!equippedTechniques.contains(selectedTechnique)) selectedTechnique = technique;
+        return true;
+    }
+    /** The selected technique must stay equipped, so unequipping it moves selection to another slot. */
+    public boolean unequip(ResourceLocation technique) {
+        if (!compatibleSchema() || technique == null || equippedTechniques.size() <= 1
+                || !equippedTechniques.remove(technique)) return false;
+        if (technique.equals(selectedTechnique)) selectedTechnique = equippedTechniques.iterator().next();
         return true;
     }
     public boolean setSelectedTechnique(ResourceLocation id) {
@@ -131,6 +150,7 @@ public final class CharacterData {
     public boolean setRace(ResourceLocation raceId) {
         if (!compatibleSchema() || Races.get(raceId) == null) return false;
         race = raceId;
+        appearance = appearance.forRace(race);
         OriginDefinition currentOrigin = Origins.get(origin);
         if (currentOrigin == null || !currentOrigin.allows(race)) origin = Origins.EARTH_WARRIOR;
         transformation = BASE_FORM;
@@ -178,12 +198,18 @@ public final class CharacterData {
     }
 
     void initialize(String characterName, RaceDefinition definition, OriginDefinition originDefinition, CombatStyle combatStyle) {
+        initialize(characterName, definition, originDefinition, combatStyle, CharacterAppearance.defaultFor(definition.id()));
+    }
+
+    void initialize(String characterName, RaceDefinition definition, OriginDefinition originDefinition, CombatStyle combatStyle,
+                    CharacterAppearance chosenAppearance) {
         reset();
         created = true;
         name = characterName;
         race = definition.id();
         origin = originDefinition.id();
         style = combatStyle.id();
+        appearance = (chosenAppearance == null ? CharacterAppearance.defaultFor(race) : chosenAppearance).forRace(race);
         for (Stat stat : Stat.values()) {
             setStat(stat, definition.base(stat) + originDefinition.initialBonuses().getOrDefault(stat, 0.0)
                     + combatStyle.bonuses().getOrDefault(stat, 0.0));
@@ -214,6 +240,7 @@ public final class CharacterData {
         basePower = currentPower = 0;
         transformation = BASE_FORM;
         selectedTechnique = new ResourceLocation("dbil", "ki_wave");
+        appearance = CharacterAppearance.HUMAN_DEFAULT;
         stats.clear();
         for (Stat stat : Stat.values()) stats.put(stat, stat.initialValue());
         ki = maxKi();
@@ -260,6 +287,7 @@ public final class CharacterData {
         ListTag flags = new ListTag();
         storyFlags.forEach(flag -> flags.add(StringTag.valueOf(flag)));
         result.put("storyFlags", flags);
+        result.put("appearance", appearance.save());
         return result;
     }
 
@@ -327,7 +355,7 @@ public final class CharacterData {
             if (id != null) setMastery(id, masteryTag.getDouble(key));
         }
         loadIds(tag.getList("unlockedTechniques", Tag.TAG_STRING), unlockedTechniques, MAX_DEFINITIONS);
-        loadIds(tag.getList("equippedTechniques", Tag.TAG_STRING), equippedTechniques, 4);
+        loadIds(tag.getList("equippedTechniques", Tag.TAG_STRING), equippedTechniques, MAX_EQUIPPED);
         equippedTechniques.retainAll(unlockedTechniques);
         ResourceLocation selected = readId(tag.getString("selectedTechnique"));
         if (!setSelectedTechnique(selected)) {
@@ -344,6 +372,7 @@ public final class CharacterData {
         }
         ListTag flags = tag.getList("storyFlags", Tag.TAG_STRING);
         for (int i = 0; i < Math.min(256, flags.size()); i++) setStoryFlag(flags.getString(i));
+        appearance = CharacterAppearance.load(tag.getCompound("appearance"), race);
     }
 
     public void copyFrom(CharacterData other) { load(other.save()); }

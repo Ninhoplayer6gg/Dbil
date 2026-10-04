@@ -1,6 +1,8 @@
 package dev.dbil.character;
 
+import dev.dbil.appearance.CharacterAppearance;
 import dev.dbil.stats.Stat;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 
@@ -38,6 +40,14 @@ public final class CharacterDataMigrations {
         if (version < 3) {
             if (!tag.contains("selectedTechnique", Tag.TAG_STRING)) tag.putString("selectedTechnique", "dbil:ki_wave");
             version = 3;
+        }
+        if (version < 4) {
+            // 0.3 visual identity: existing characters receive their race's default look and can edit it later.
+            if (!tag.contains("appearance", Tag.TAG_COMPOUND)) {
+                ResourceLocation race = ResourceLocation.tryParse(tag.getString("race"));
+                tag.put("appearance", CharacterAppearance.defaultFor(race).save());
+            }
+            version = 4;
         }
         // CharacterData protects unknown newer schemas before reaching migration; never lower their version here.
         tag.putInt("schemaVersion", version);

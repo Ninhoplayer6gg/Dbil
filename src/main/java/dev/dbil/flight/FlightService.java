@@ -28,6 +28,8 @@ public final class FlightService {
         state.flightVelocity = new Vec3(0, 0.12, 0);
         state.flightInputTicks = 0;
         state.flightMaximumSpeed = maximumSpeed(data);
+        state.flightFastSpeed = fastSpeed(data);
+        state.flightFast = false;
         state.flightAckRequired = state.flightHardReset = true;
         player.setNoGravity(true);
         player.fallDistance = 0;
@@ -76,6 +78,8 @@ public final class FlightService {
         var race = Races.get(data.raceId());
         double efficiency = race == null ? 1 : race.kiCostMultiplier();
         double cost = ServerConfig.flightKiCost.get() * efficiency / (1 + data.stat(Stat.KI_CONTROL) * 0.005);
+        boolean moving = Math.abs(state.forward) > 0.05 || Math.abs(state.strafe) > 0.05 || state.ascend || state.descend;
+        if (state.flightFast && moving) cost *= ServerConfig.fastFlightKiMultiplier.get();
         if (player.isPassenger() || player.isSpectator() || player.isSleeping() || player.isInWaterOrBubble() || !player.isAlive()
                 || !data.created() || !data.spendKi(cost)) { stop(player, state); return; }
         long now = player.serverLevel().getGameTime();
@@ -84,10 +88,16 @@ public final class FlightService {
             state.ascend = state.descend = false;
         }
         restorePosition(player, state);
-        state.flightMaximumSpeed = maximumSpeed(data);
+        // Charging a technique or holding a beam roots the caster; the factor is part of the ACKed speeds.
+        double root = state.charging || state.techniqueCharging && state.techniqueHolding || state.activeBeamId >= 0 ? 0.35 : 1.0;
+        double previousNormal = state.flightMaximumSpeed, previousFast = state.flightFastSpeed;
+        state.flightMaximumSpeed = Math.max(0.05, maximumSpeed(data) * root);
+        state.flightFastSpeed = Math.max(0.05, fastSpeed(data) * root);
+        if (previousNormal != state.flightMaximumSpeed || previousFast != state.flightFastSpeed) state.flightAckRequired = true;
         FlightMotion.Input input = new FlightMotion.Input(state.forward, state.strafe, state.ascend,
-                state.descend, player.getYRot());
-        Vec3 requested = FlightMotion.nextVelocity(state.flightVelocity, input, state.flightMaximumSpeed);
+                state.descend, player.getYRot(), player.getXRot(), state.flightFast);
+        Vec3 requested = FlightMotion.nextVelocity(state.flightVelocity, input,
+                state.flightFast ? state.flightFastSpeed : state.flightMaximumSpeed);
         if (!player.serverLevel().hasChunkAt(net.minecraft.core.BlockPos.containing(player.position().add(requested)))) {
             requested = Vec3.ZERO;
         }
@@ -107,6 +117,12 @@ public final class FlightService {
         if (now - state.lastFlightAckTick >= FlightMotion.ACK_INTERVAL_TICKS) {
             state.flightAckRequired = true;
         }
+    }
+
+    /** Fast flight multiplies the normal cruise speed and is capped separately by the server config. */
+    public static double fastSpeed(CharacterData data) {
+        double cap = ServerConfig.SPEC.isLoaded() ? ServerConfig.maxFastFlightSpeed.get() : 1.35;
+        return Math.max(maximumSpeed(data), Math.min(cap, maximumSpeed(data) * 1.9));
     }
 
     public static double maximumSpeed(CharacterData data) {
@@ -138,6 +154,7 @@ public final class FlightService {
     public static void stop(ServerPlayer player, PlayerState state) {
         if (state.flying) restorePosition(player, state);
         state.flying = false;
+        state.flightFast = false;
         player.connection.resetPosition();
         state.forward = state.strafe = 0;
         state.ascend = state.descend = false;

@@ -19,6 +19,9 @@ public final class TrainingChallenges {
     public static final ResourceLocation FIRST_COMBAT = DBIL.id("first_combat");
     public static final ResourceLocation KI_CONTROL = DBIL.id("ki_control");
     public static final ResourceLocation AWAKENING = DBIL.id("awakening");
+    public static final ResourceLocation BEAM_TRAINING = DBIL.id("beam_training");
+    public static final ResourceLocation RAPID_KI = DBIL.id("rapid_ki");
+    public static final ResourceLocation EXPLOSIVE_WAVE = DBIL.id("explosive_wave");
     public static final ResourceLocation UNLOCK_EVALUATOR = DBIL.id("training_challenge");
     private static final List<ChallengeDefinition> DEFINITIONS = List.of(
             new ChallengeDefinition(FIRST_COMBAT, Component.translatable("challenge.dbil.first_combat"), null,
@@ -34,7 +37,23 @@ public final class TrainingChallenges {
                             new ChallengeDefinition.Objective("level", 3),
                             new ChallengeDefinition.Objective("ki_charged", 250),
                             new ChallengeDefinition.Objective("technique_hits", 8)),
-                    80, null, true));
+                    80, null, true),
+            // 0.3 beam path. Appended after the 0.2 chain so existing progress and rewards keep their order.
+            new ChallengeDefinition(BEAM_TRAINING, Component.translatable("challenge.dbil.beam_training"), KI_CONTROL,
+                    List.of(new ChallengeDefinition.Objective("technique_hits", 12),
+                            new ChallengeDefinition.Objective("ki_charged", 400),
+                            new ChallengeDefinition.Objective("level", 2)),
+                    70, DBIL.id("kamehameha"), false),
+            new ChallengeDefinition(RAPID_KI, Component.translatable("challenge.dbil.rapid_ki"), BEAM_TRAINING,
+                    List.of(new ChallengeDefinition.Objective("beam_hits", 4),
+                            new ChallengeDefinition.Objective("technique_hits", 20),
+                            new ChallengeDefinition.Objective("melee_hits", 40)),
+                    80, DBIL.id("masenko"), false),
+            new ChallengeDefinition(EXPLOSIVE_WAVE, Component.translatable("challenge.dbil.explosive_wave"), AWAKENING,
+                    List.of(new ChallengeDefinition.Objective("training_defeats", 10),
+                            new ChallengeDefinition.Objective("beam_hits", 8),
+                            new ChallengeDefinition.Objective("level", 3)),
+                    100, DBIL.id("galick_gun"), false));
     // Weak player keys release session timing when the actual player entity is replaced or disconnected.
     // The map is accessed only on the logical server thread; no timing is persisted or sent to clients.
     private static final Map<ServerPlayer, Long> LAST_EVALUATED = new WeakHashMap<>();

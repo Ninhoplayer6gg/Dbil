@@ -1,0 +1,293 @@
+{
+  "ki.blast.fire": {
+    "subtitle": "subtitles.dbil.ki_blast_fire",
+    "sounds": [
+      {
+        "name": "minecraft:entity.blaze.shoot",
+        "type": "event",
+        "pitch": 1.6,
+        "volume": 0.7
+      },
+      {
+        "name": "minecraft:entity.firework_rocket.blast",
+        "type": "event",
+        "pitch": 1.7,
+        "volume": 0.6
+      }
+    ]
+  },
+  "ki.wave.fire": {
+    "subtitle": "subtitles.dbil.ki_wave_fire",
+    "sounds": [
+      {
+        "name": "minecraft:entity.firework_rocket.launch",
+        "type": "event",
+        "pitch": 0.75,
+        "volume": 0.9
+      },
+      {
+        "name": "minecraft:item.trident.throw",
+        "type": "event",
+        "pitch": 0.7,
+        "volume": 0.8
+      }
+    ]
+  },
+  "ki.impact": {
+    "subtitle": "subtitles.dbil.ki_impact",
+    "sounds": [
+      {
+        "name": "minecraft:entity.firework_rocket.blast",
+        "type": "event",
+        "pitch": 0.8,
+        "volume": 0.9
+      },
+      {
+        "name": "minecraft:entity.generic.explode",
+        "type": "event",
+        "pitch": 1.7,
+        "volume": 0.35
+      }
+    ]
+  },
+  "technique.charge": {
+    "subtitle": "subtitles.dbil.technique_charge",
+    "sounds": [
+      {
+        "name": "minecraft:block.beacon.power_select",
+        "type": "event",
+        "pitch": 1.6,
+        "volume": 0.6
+      }
+    ]
+  },
+  "beam.charge": {
+    "subtitle": "subtitles.dbil.beam_charge",
+    "sounds": [
+      {
+        "name": "minecraft:entity.warden.sonic_charge",
+        "type": "event",
+        "pitch": 1.25,
+        "volume": 0.7
+      }
+    ]
+  },
+  "beam.fire": {
+    "subtitle": "subtitles.dbil.beam_fire",
+    "sounds": [
+      {
+        "name": "minecraft:entity.warden.sonic_boom",
+        "type": "event",
+        "pitch": 0.85,
+        "volume": 0.9
+      }
+    ]
+  },
+  "beam.hum": {
+    "subtitle": "subtitles.dbil.beam_hum",
+    "sounds": [
+      {
+        "name": "minecraft:block.beacon.ambient",
+        "type": "event",
+        "pitch": 1.4,
+        "volume": 0.8
+      }
+    ]
+  },
+  "explosion": {
+    "subtitle": "subtitles.dbil.explosion",
+    "sounds": [
+      {
+        "name": "minecraft:entity.generic.explode",
+        "type": "event",
+        "pitch": 1.15,
+        "volume": 0.8
+      }
+    ]
+  },
+  "explosion.big": {
+    "subtitle": "subtitles.dbil.explosion_big",
+    "sounds": [
+      {
+        "name": "minecraft:entity.generic.explode",
+        "type": "event",
+        "pitch": 0.75
+      },
+      {
+        "name": "minecraft:entity.dragon_fireball.explode",
+        "type": "event",
+        "pitch": 0.8
+      }
+    ]
+  },
+  "aura.charge": {
+    "subtitle": "subtitles.dbil.aura_charge",
+    "sounds": [
+      {
+        "name": "minecraft:block.respawn_anchor.charge",
+        "type": "event",
+        "pitch": 0.7,
+        "volume": 0.55
+      }
+    ]
+  },
+  "aura.loop": {
+    "subtitle": "subtitles.dbil.aura_loop",
+    "sounds": [
+      {
+        "name": "minecraft:block.fire.ambient",
+        "type": "event",
+        "pitch": 0.6,
+        "volume": 0.6
+      }
+    ]
+  },
+  "transform.charge": {
+    "subtitle": "subtitles.dbil.transform_charge",
+    "sounds": [
+      {
+        "name": "minecraft:block.beacon.activate",
+        "type": "event",
+        "pitch": 0.65,
+        "volume": 0.8
+      }
+    ]
+  },
+  "transform.complete": {
+    "subtitle": "subtitles.dbil.transform_complete",
+    "sounds": [
+      {
+        "name": "minecraft:item.trident.thunder",
+        "type": "event",
+        "pitch": 1.05,
+        "volume": 0.9
+      }
+    ]
+  },
+  "transform.revert": {
+    "subtitle": "subtitles.dbil.transform_revert",
+    "sounds": [
+      {
+        "name": "minecraft:block.beacon.deactivate",
+        "type": "event",
+        "pitch": 1.2,
+        "volume": 0.7
+      }
+    ]
+  },
+  "melee.swing": {
+    "subtitle": "subtitles.dbil.melee_swing",
+    "sounds": [
+      {
+        "name": "minecraft:entity.player.attack.sweep",
+        "type": "event",
+        "pitch": 1.7,
+        "volume": 0.45
+      }
+    ]
+  },
+  "melee.hit": {
+    "subtitle": "subtitles.dbil.melee_hit",
+    "sounds": [
+      {
+        "name": "minecraft:entity.player.attack.strong",
+        "type": "event",
+        "pitch": 1.25,
+        "volume": 0.8
+      },
+      {
+        "name": "minecraft:entity.player.attack.crit",
+        "type": "event",
+        "pitch": 1.4,
+        "volume": 0.6
+      }
+    ]
+  },
+  "melee.hit_heavy": {
+    "subtitle": "subtitles.dbil.melee_hit_heavy",
+    "sounds": [
+      {
+        "name": "minecraft:entity.player.attack.knockback",
+        "type": "event",
+        "pitch": 0.75
+      },
+      {
+        "name": "minecraft:entity.generic.explode",
+        "type": "event",
+        "pitch": 1.9,
+        "volume": 0.3
+      }
+    ]
+  },
+  "guard.block": {
+    "subtitle": "subtitles.dbil.guard_block",
+    "sounds": [
+      {
+        "name": "minecraft:item.shield.block",
+        "type": "event",
+        "pitch": 1.2,
+        "volume": 0.8
+      }
+    ]
+  },
+  "guard.break": {
+    "subtitle": "subtitles.dbil.guard_break",
+    "sounds": [
+      {
+        "name": "minecraft:item.shield.break",
+        "type": "event",
+        "pitch": 0.9,
+        "volume": 0.9
+      }
+    ]
+  },
+  "dash": {
+    "subtitle": "subtitles.dbil.dash",
+    "sounds": [
+      {
+        "name": "minecraft:entity.ender_dragon.flap",
+        "type": "event",
+        "pitch": 1.9,
+        "volume": 0.5
+      }
+    ]
+  },
+  "vanish": {
+    "subtitle": "subtitles.dbil.vanish",
+    "sounds": [
+      {
+        "name": "minecraft:entity.illusioner.mirror_move",
+        "type": "event",
+        "pitch": 1.5,
+        "volume": 0.8
+      },
+      {
+        "name": "minecraft:entity.enderman.teleport",
+        "type": "event",
+        "pitch": 1.8,
+        "volume": 0.45
+      }
+    ]
+  },
+  "flight.wind": {
+    "subtitle": "subtitles.dbil.flight_wind",
+    "sounds": [
+      {
+        "name": "minecraft:item.elytra.flying",
+        "type": "event",
+        "volume": 0.6
+      }
+    ]
+  },
+  "flight.takeoff": {
+    "subtitle": "subtitles.dbil.flight_takeoff",
+    "sounds": [
+      {
+        "name": "minecraft:entity.ender_dragon.flap",
+        "type": "event",
+        "pitch": 1.4,
+        "volume": 0.55
+      }
+    ]
+  }
+}

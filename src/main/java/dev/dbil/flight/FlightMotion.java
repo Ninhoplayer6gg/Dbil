@@ -15,12 +15,17 @@ public final class FlightMotion {
     public static final double HARD_CORRECTION_DISTANCE = 5.0;
     private static final double STOP_EPSILON_SQUARED = 0.00001;
 
-    public record Input(float forward, float strafe, boolean ascend, boolean descend, float yaw) {
+    /** Fast flight (0.3) follows the look pitch when moving forward; normal flight stays level and stable. */
+    public record Input(float forward, float strafe, boolean ascend, boolean descend, float yaw, float pitch, boolean fast) {
         public static final Input NONE = new Input(0, 0, false, false, 0);
         public Input {
             forward = Float.isFinite(forward) ? Math.max(-1, Math.min(1, forward)) : 0;
             strafe = Float.isFinite(strafe) ? Math.max(-1, Math.min(1, strafe)) : 0;
             yaw = Float.isFinite(yaw) ? yaw : 0;
+            pitch = Float.isFinite(pitch) ? Math.max(-90, Math.min(90, pitch)) : 0;
+        }
+        public Input(float forward, float strafe, boolean ascend, boolean descend, float yaw) {
+            this(forward, strafe, ascend, descend, yaw, 0, false);
         }
     }
 
@@ -35,9 +40,16 @@ public final class FlightMotion {
 
     public static Vec3 desired(Input input, double maximumSpeed) {
         double yaw = Math.toRadians(input.yaw());
-        Vec3 direction = new Vec3(-Math.sin(yaw) * input.forward() + Math.cos(yaw) * input.strafe(),
-                (input.ascend() ? 1 : 0) - (input.descend() ? 1 : 0),
-                Math.cos(yaw) * input.forward() + Math.sin(yaw) * input.strafe());
+        double vertical = (input.ascend() ? 1 : 0) - (input.descend() ? 1 : 0);
+        double level = 1;
+        if (input.fast() && input.forward() > 0) {
+            double pitch = Math.toRadians(input.pitch());
+            level = Math.cos(pitch);
+            vertical += -Math.sin(pitch) * input.forward();
+        }
+        Vec3 direction = new Vec3(-Math.sin(yaw) * input.forward() * level + Math.cos(yaw) * input.strafe(),
+                vertical,
+                Math.cos(yaw) * input.forward() * level + Math.sin(yaw) * input.strafe());
         if (direction.lengthSqr() > 1) direction = direction.normalize();
         double speed = Double.isFinite(maximumSpeed) ? Math.max(0, Math.min(1.5, maximumSpeed)) : 0;
         return direction.scale(speed);
