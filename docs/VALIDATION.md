@@ -18,7 +18,24 @@ real roda no GitHub Actions (`.github/workflows/build.yml`, runner `ubuntu-lates
 
 ## Resultado registrado
 
-RESULT_TABLE
+Execução de referência: GitHub Actions run #8 (commit `a089055`, 2026-10-04), repetida idêntica na run #9 (merge na
+`main`, commit `0e71830`).
+
+| Passo | Resultado |
+|---|---|
+| `./gradlew clean build` | **BUILD SUCCESSFUL** (30 s com cache); JAR `build/libs/dbil-0.3.0.jar` |
+| `./gradlew runGameTestServer` | **All 61 required tests passed** (50 da 0.2 + 11 novos da 0.3) |
+| Servidor dedicado | `Done (5.783s)!` com DBIL 0.3.0 carregado, sem erro de classe de cliente/dist |
+| Cliente visual (Xvfb) | **PASS**, 28 screenshots, roteiro completo sem exceção no cliente |
+| Multiplayer (servidor + 2 clientes) | MP_RESULT |
+
+Marcos registrados pelo cliente na run #8: `lock-on target=237`, `charging=true`, `transforming=true`,
+`form=dbil:super_saiyan`, `combo target=413 rival=413`, `flying=true fastFlight=true`, `after revert form=dbil:base`,
+`vanish target=480`, `guarding=true`, `beam ticks observed=162`, `kamehameha charge at shot=80%`.
+
+Histórico: as runs #3–#7 também compilaram e passaram nos GameTests (50 → 60 → 61 testes conforme os testes novos
+entravam); a run #4 teve 1 falha (troca de alvo interferida por inimigos de outro teste no mesmo lote), corrigida
+isolando o lote. As runs #5–#7 serviram para corrigir problemas achados pelo próprio teste visual (abaixo).
 
 ## Teste visual automatizado do cliente
 
@@ -42,6 +59,8 @@ Renderização por software (Mesa llvmpipe) em Xvfb: prova funcionamento e apar�
 - Painel de técnica mostrava "Recarga" durante a carga; agora mostra a porcentagem de carga.
 - Dica de controles do menu invadia o botão Concluído; agora é cortada ao espaço disponível.
 - Partículas da preparação usavam dourado também para Humanos (Potencial Liberado); agora brancas.
+- O spawn aleatório do mundo de teste caiu uma vez no oceano, onde voo e transformação são (corretamente)
+  recusados; o roteiro agora constrói uma arena seca antes de começar, para ser determinístico.
 
 ## Cobertura dos GameTests (0.3)
 

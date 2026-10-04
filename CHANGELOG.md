@@ -46,4 +46,10 @@
 - Loadout de 6 técnicas (antes 4), com equipar/desequipar no menu.
 - Sons nomeados DBIL (sounds.json) e 7 partículas próprias.
 - Novos comandos: `/dbil learnall`, `/dbil appearance default`.
-- CI: build, GameTests, servidor dedicado e teste visual automatizado de cliente.
+- CI: build, GameTests (61), servidor dedicado, teste visual automatizado de cliente e teste multiplayer com
+  servidor dedicado + dois clientes gráficos.
+
+### Correções
+- Voltar à forma base agora funciona na água, montado ou dormindo (antes era recusado; só iniciar uma
+  transformação continua bloqueado nesses estados).
+- Painel de técnica mostra a carga (%) ou "Preparando" durante o preparo, em vez da recarga.

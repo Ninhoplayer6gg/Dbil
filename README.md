@@ -102,8 +102,9 @@ Com **JDK 17**:
 ./gradlew runClient            # cliente de desenvolvimento
 ```
 
-O workflow `.github/workflows/build.yml` executa build limpo, GameTests, boot de servidor dedicado e um teste visual
-automatizado de cliente (Xvfb) que percorre criação, aura, transformação, Kamehameha, combo, voo rápido e telas.
+O workflow `.github/workflows/build.yml` executa build limpo, GameTests, boot de servidor dedicado, um teste visual
+automatizado de cliente (Xvfb) que percorre criação, aura, transformação, os três feixes, combo, Vanish, guarda, voo
+rápido e telas, e um teste multiplayer com servidor dedicado e dois clientes gráficos (um age, o outro observa).
 
 ## Documentação
 
