@@ -1,0 +1,400 @@
+Picked up JAVA_TOOL_OPTIONS: -Dhttps.proxyHost=proxy -Dhttps.proxyPort=8080 -Dhttp.proxyHost=proxy -Dhttp.proxyPort=8080 -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts
+[02:24:17] [main/INFO] [cp.mo.mo.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgeserver, --fml.forgeVersion, 47.3.22, --fml.mcVersion, 1.20.1, --fml.forgeGroup, net.minecraftforge, --fml.mcpVersion, 20230612.114412, nogui]
+[02:24:17] [main/INFO] [cp.mo.mo.Launcher/MODLAUNCHER]: ModLauncher 10.0.9+10.0.9+main.dcd20f30 starting: java version 17.0.20.1 by Eclipse Adoptium; OS Linux arch amd64 version 6.18.44
+[02:24:17] [main/INFO] [ne.mi.fm.lo.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forgeserver
+[02:24:17] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.5 Source=union:/workspace/.tools/dbil-dedicated/libraries/org/spongepowered/mixin/0.8.5/mixin-0.8.5.jar%2365!/ Service=ModLauncher Env=SERVER
+[02:24:18] [main/WARN] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Mod file /workspace/.tools/dbil-dedicated/libraries/net/minecraftforge/fmlcore/1.20.1-47.3.22/fmlcore-1.20.1-47.3.22.jar is missing mods.toml file
+[02:24:18] [main/WARN] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Mod file /workspace/.tools/dbil-dedicated/libraries/net/minecraftforge/javafmllanguage/1.20.1-47.3.22/javafmllanguage-1.20.1-47.3.22.jar is missing mods.toml file
+[02:24:18] [main/WARN] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Mod file /workspace/.tools/dbil-dedicated/libraries/net/minecraftforge/lowcodelanguage/1.20.1-47.3.22/lowcodelanguage-1.20.1-47.3.22.jar is missing mods.toml file
+[02:24:18] [main/WARN] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Mod file /workspace/.tools/dbil-dedicated/libraries/net/minecraftforge/mclanguage/1.20.1-47.3.22/mclanguage-1.20.1-47.3.22.jar is missing mods.toml file
+[02:24:18] [main/INFO] [ne.mi.fm.lo.mo.JarInJarDependencyLocator/]: No dependencies to load found. Skipping!
+[02:24:19] [main/INFO] [cp.mo.mo.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgeserver' with arguments [nogui]
+[02:24:23] [modloading-worker-0/INFO] [ne.mi.co.ForgeMod/FORGEMOD]: Forge mod loading, version 47.3.22, for MC 1.20.1 with MCP 20230612.114412
+[02:24:23] [modloading-worker-0/INFO] [ne.mi.co.MinecraftForge/FORGE]: MinecraftForge v47.3.22 Initialized
+[02:24:23] [modloading-worker-0/INFO] [de.db.DBIL/]: DBIL 0.1.0: modular server-authoritative vertical slice initialized
+[02:24:24] [Forge Version Check/INFO] [ne.mi.fm.VersionChecker/]: [forge] Starting version check at https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json
+[02:24:24] [Forge Version Check/INFO] [ne.mi.fm.VersionChecker/]: [forge] Found status: OUTDATED Current: 47.3.22 Target: 47.4.10
+[02:24:25] [main/INFO] [mojang/YggdrasilAuthenticationService]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
+[02:24:25] [main/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/workspace/.tools/dbil-dedicated/libraries/net/minecraft/server/1.20.1-20230612.114412/server-1.20.1-20230612.114412-srg.jar%23103!/assets/.mcassetsroot' uses unexpected schema
+[02:24:25] [main/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/workspace/.tools/dbil-dedicated/libraries/net/minecraft/server/1.20.1-20230612.114412/server-1.20.1-20230612.114412-srg.jar%23103!/data/.mcassetsroot' uses unexpected schema
+[02:24:26] [main/INFO] [minecraft/RecipeManager]: Loaded 7 recipes
+[02:24:27] [main/INFO] [minecraft/AdvancementList]: Loaded 1272 advancements
+[02:24:27] [Server thread/INFO] [minecraft/DedicatedServer]: Starting minecraft server version 1.20.1
+[02:24:27] [Server thread/INFO] [minecraft/DedicatedServer]: Loading properties
+[02:24:27] [Server thread/INFO] [minecraft/DedicatedServer]: Default game type: SURVIVAL
+[02:24:27] [Server thread/INFO] [minecraft/MinecraftServer]: Generating keypair
+> 
+  
+[02:24:27] [Server thread/INFO] [minecraft/DedicatedServer]: Starting Minecraft server on 127.0.0.1:25565
+> 
+  
+[02:24:27] [Server thread/INFO] [minecraft/ServerConnectionListener]: Using epoll channel type
+> 
+  
+[02:24:27] [Server thread/WARN] [minecraft/DedicatedServer]: **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+> 
+  
+[02:24:27] [Server thread/WARN] [minecraft/DedicatedServer]: The server will make no attempt to authenticate usernames. Beware.
+> 
+  
+[02:24:27] [Server thread/WARN] [minecraft/DedicatedServer]: While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
+> 
+  
+[02:24:27] [Server thread/WARN] [minecraft/DedicatedServer]: To change this, set "online-mode" to "true" in the server.properties file.
+> 
+  
+[02:24:27] [Server thread/INFO] [minecraft/DedicatedServer]: Preparing level "dbil-runtime-test"
+> 
+  
+[02:24:27] [Server thread/INFO] [minecraft/MinecraftServer]: Preparing start region for dimension minecraft:overworld
+> 
+  
+[02:24:30] [Yggdrasil Key Fetcher/ERROR] [mojang/YggdrasilServicesKeyInfo]: Failed to request yggdrasil public key
+com.mojang.authlib.exceptions.AuthenticationUnavailableException: Cannot contact authentication server
+	at com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService.makeRequest(YggdrasilAuthenticationService.java:119) ~[authlib-4.0.43.jar%2375!/:?] {}
+	at com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService.makeRequest(YggdrasilAuthenticationService.java:91) ~[authlib-4.0.43.jar%2375!/:?] {}
+	at com.mojang.authlib.yggdrasil.YggdrasilServicesKeyInfo.fetch(YggdrasilServicesKeyInfo.java:94) ~[authlib-4.0.43.jar%2375!/:?] {}
+	at com.mojang.authlib.yggdrasil.YggdrasilServicesKeyInfo.lambda$get$1(YggdrasilServicesKeyInfo.java:81) ~[authlib-4.0.43.jar%2375!/:?] {}
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539) ~[?:?] {}
+	at java.util.concurrent.FutureTask.runAndReset(FutureTask.java:305) ~[?:?] {}
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[?:?] {}
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136) ~[?:?] {}
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635) ~[?:?] {}
+	at java.lang.Thread.run(Thread.java:840) ~[?:?] {}
+Caused by: java.net.ConnectException: Connection refused
+	at sun.nio.ch.Net.pollConnect(Native Method) ~[?:?] {}
+	at sun.nio.ch.Net.pollConnectNow(Net.java:684) ~[?:?] {}
+	at sun.nio.ch.NioSocketImpl.timedFinishConnect(NioSocketImpl.java:554) ~[?:?] {}
+	at sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:602) ~[?:?] {}
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:327) ~[?:?] {}
+	at java.net.Socket.connect(Socket.java:633) ~[?:?] {}
+	at sun.security.ssl.SSLSocketImpl.connect(SSLSocketImpl.java:304) ~[?:?] {}
+	at sun.net.NetworkClient.doConnect(NetworkClient.java:178) ~[?:?] {}
+	at sun.net.www.http.HttpClient.openServer(HttpClient.java:541) ~[?:?] {}
+	at sun.net.www.http.HttpClient.openServer(HttpClient.java:646) ~[?:?] {}
+	at sun.net.www.protocol.https.HttpsClient.<init>(HttpsClient.java:267) ~[?:?] {}
+	at sun.net.www.protocol.https.HttpsClient.New(HttpsClient.java:381) ~[?:?] {}
+	at sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.getNewHttpClient(AbstractDelegateHttpsURLConnection.java:196) ~[?:?] {}
+	at sun.net.www.protocol.http.HttpURLConnection.plainConnect0(HttpURLConnection.java:1310) ~[?:?] {}
+	at sun.net.www.protocol.http.HttpURLConnection.plainConnect(HttpURLConnection.java:1151) ~[?:?] {}
+	at sun.net.www.protocol.http.HttpURLConnection.connect(HttpURLConnection.java:1080) ~[?:?] {}
+	at sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.connect(AbstractDelegateHttpsURLConnection.java:181) ~[?:?] {}
+	at sun.net.www.protocol.http.HttpURLConnection.getInputStream0(HttpURLConnection.java:1719) ~[?:?] {}
+	at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1644) ~[?:?] {}
+	at sun.net.www.protocol.https.HttpsURLConnectionImpl.getInputStream(HttpsURLConnectionImpl.java:224) ~[?:?] {}
+	at com.mojang.authlib.HttpAuthenticationService.performGetRequest(HttpAuthenticationService.java:140) ~[authlib-4.0.43.jar%2375!/:?] {}
+	at com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService.makeRequest(YggdrasilAuthenticationService.java:96) ~[authlib-4.0.43.jar%2375!/:?] {}
+	... 9 more
+> 
+  
+[02:24:30] [Worker-Main-1/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 0%
+> 
+  
+[02:24:30] [Worker-Main-1/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 0%
+> 
+  
+[02:24:30] [Worker-Main-1/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 0%
+> 
+  
+[02:24:30] [Worker-Main-1/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 0%
+> 
+  
+[02:24:30] [Worker-Main-1/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 0%
+> 
+  
+[02:24:30] [Worker-Main-1/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 0%
+> 
+  
+[02:24:30] [Worker-Main-1/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 0%
+> 
+  
+[02:24:31] [Worker-Main-1/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 0%
+> 
+  
+[02:24:32] [Server thread/INFO] [minecraft/LoggerChunkProgressListener]: Time elapsed: 4222 ms
+> 
+  
+[02:24:32] [Server thread/INFO] [minecraft/DedicatedServer]: Done (4.506s)! For help, type "help"
+> 
+  
+[02:24:32] [Server thread/INFO] [ne.mi.se.pe.PermissionAPI/]: Successfully initialized permission handler forge:default_handler
+> 
+  
+[02:25:19] [Server thread/INFO] [minecraft/PlayerList]: DBILTestTwo[/127.0.0.1:44970] logged in with entity id 241 at (5.415908603962396, -60.0, 15.899959257609158)
+> 
+  
+[02:25:19] [Server thread/INFO] [minecraft/MinecraftServer]: DBILTestTwo joined the game
+> 
+  
+[02:25:21] [Server thread/INFO] [minecraft/PlayerList]: DBILTestOne[/127.0.0.1:44980] logged in with entity id 242 at (-6.3905190419096085, -60.0, -8.592901540713195)
+> 
+  
+[02:25:21] [Server thread/INFO] [minecraft/MinecraftServer]: DBILTestOne joined the game
+> data get entity DBILTestOne Health
+> 
+  
+[02:25:52] [Server thread/INFO] [minecraft/MinecraftServer]: DBILTestOne has the following entity data: 27.0f
+> data get entity DBILTestTwo Health
+> 
+  
+[02:25:52] [Server thread/INFO] [minecraft/MinecraftServer]: DBILTestTwo has the following entity data: 29.1f
+> dbil debug DBILTestOne
+> 
+  
+[02:26:02] [Server thread/INFO] [minecraft/MinecraftServer]: DBIL Kairo Earth | criado=true | raça=dbil:human | nível=1 | XP=0 | Ki=120.0/120.0 | Stamina=100.0/100.0 | Poder=1104/1104
+> 
+  
+[02:26:02] [Server thread/INFO] [minecraft/MinecraftServer]: Origem=dbil:earth_warrior | estilo=balanced | técnicas=[dbil:ki_wave] | forma=dbil:base | voo=false | carregando=false | combo=0 | alvo=-1 | schema=2
+> dbil debug DBILTestTwo
+> 
+  
+[02:26:03] [Server thread/INFO] [minecraft/MinecraftServer]: DBIL Raku Survivor | criado=true | raça=dbil:saiyan | nível=1 | XP=0 | Ki=120.0/120.0 | Stamina=100.0/100.0 | Poder=1187/1187
+> 
+  
+[02:26:03] [Server thread/INFO] [minecraft/MinecraftServer]: Origem=dbil:survivor | estilo=brawler | técnicas=[dbil:ki_wave] | forma=dbil:base | voo=false | carregando=false | combo=0 | alvo=-1 | schema=2
+> kill DBILTestOne
+> 
+  
+[02:26:03] [Server thread/INFO] [minecraft/MinecraftServer]: DBILTestOne was killed
+> 
+  
+[02:26:03] [Server thread/INFO] [minecraft/MinecraftServer]: Killed DBILTestOne
+> 
+  
+[02:26:39] [Server thread/INFO] [minecraft/MinecraftServer]: DBILTestTwo was killed whilst fighting Slime
+> 
+  
+[02:26:39] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestTwo: Killed DBILTestTwo]
+> 
+  
+[02:26:44] [Server thread/WARN] [minecraft/ServerGamePacketListenerImpl]: DBILTestTwo moved too quickly! -14.561821665094236,0.0,-1.7471442990435255
+> kill @e[type=minecraft:slime]
+> 
+  
+[02:27:15] [Server thread/INFO] [minecraft/MinecraftServer]: Killed 34 entities
+> dbil heal DBILTestOne
+> 
+  
+[02:27:15] [Server thread/INFO] [minecraft/MinecraftServer]: HP, Ki e Stamina restaurados: DBILTestOne
+> tp DBILTestOne 0.5 -60 0.5 0 0
+> 
+  
+[02:27:15] [Server thread/INFO] [minecraft/MinecraftServer]: Teleported DBILTestOne to 0.500000, -60.000000, 0.500000
+> 
+  
+[02:27:27] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestTwo: Gamerule doMobSpawning is now set to: false]
+> kill @e[type=minecraft:slime]
+> 
+  
+[02:27:29] [Server thread/INFO] [minecraft/MinecraftServer]: Killed 68 entities
+> dbil heal DBILTestTwo
+> 
+  
+[02:27:29] [Server thread/INFO] [minecraft/MinecraftServer]: HP, Ki e Stamina restaurados: DBILTestTwo
+> tp DBILTestTwo 0.5 -60 -5.5 0 0
+> 
+  
+[02:27:29] [Server thread/INFO] [minecraft/MinecraftServer]: Teleported DBILTestTwo to 0.500000, -60.000000, -5.500000
+> dbil setki 10 DBILTestOne
+> 
+  
+[02:27:29] [Server thread/INFO] [minecraft/MinecraftServer]: Ki de DBILTestOne: 10.0/120.0
+> 
+  
+[02:27:31] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestTwo: Teleported DBILTestOne to 0.500000, -60.000000, 0.500000]
+> 
+  
+[02:27:32] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestTwo: Teleported DBILTestTwo to 0.500000, -60.000000, -5.500000]
+> 
+  
+[02:27:34] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestTwo: HP, Ki e Stamina restaurados: DBILTestOne]
+> 
+  
+[02:27:35] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestTwo: HP, Ki e Stamina restaurados: DBILTestTwo]
+> 
+  
+[02:28:07] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestTwo: Ki de DBILTestOne: 10.0/120.0]
+> 
+  
+[02:28:38] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestOne: Set the time to 1000]
+> 
+  
+[02:28:40] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestOne: Summoned new Training Rival]
+> dbil debug DBILTestOne
+> dbil debug DBILTestTwo
+> 
+  
+[02:31:21] [Server thread/INFO] [minecraft/MinecraftServer]: DBIL Kairo Earth | criado=true | raça=dbil:human | nível=1 | XP=39 | Ki=120.0/120.0 | Stamina=100.0/100.0 | Poder=732/1104
+> 
+  
+[02:31:21] [Server thread/INFO] [minecraft/MinecraftServer]: Origem=dbil:earth_warrior | estilo=balanced | técnicas=[dbil:ki_wave] | forma=dbil:base | voo=false | carregando=false | combo=1 | alvo=-1 | schema=2
+> 
+  
+[02:31:21] [Server thread/INFO] [minecraft/MinecraftServer]: DBIL Raku Survivor | criado=true | raça=dbil:saiyan | nível=1 | XP=0 | Ki=120.0/120.0 | Stamina=100.0/100.0 | Poder=1187/1187
+> 
+  
+[02:31:21] [Server thread/INFO] [minecraft/MinecraftServer]: Origem=dbil:survivor | estilo=brawler | técnicas=[dbil:ki_wave] | forma=dbil:base | voo=false | carregando=false | combo=0 | alvo=-1 | schema=2
+> data get entity @e[type=dbil:training_enemy,limit=1] Health
+> 
+  
+[02:31:21] [Server thread/INFO] [minecraft/MinecraftServer]: No entity was found
+> 
+  
+[02:32:44] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestOne: HP, Ki e Stamina restaurados: DBILTestOne]
+> 
+  
+[02:32:46] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestOne: Summoned new Training Rival]
+> 
+  
+[02:33:59] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestOne: HP, Ki e Stamina restaurados: DBILTestOne]
+> 
+  
+[02:34:02] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestOne: Summoned new Training Rival]
+> 
+  
+[02:35:58] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestOne: HP, Ki e Stamina restaurados: DBILTestOne]
+> dbil debug DBILTestOne
+> 
+  
+[02:36:16] [Server thread/INFO] [minecraft/MinecraftServer]: DBIL Kairo Earth | criado=true | raça=dbil:human | nível=1 | XP=78 | Ki=94.1/120.0 | Stamina=100.0/100.0 | Poder=948/1105
+> 
+  
+[02:36:16] [Server thread/INFO] [minecraft/MinecraftServer]: Origem=dbil:earth_warrior | estilo=balanced | técnicas=[dbil:ki_wave] | forma=dbil:base | voo=false | carregando=false | combo=0 | alvo=-1 | schema=2
+> data get entity DBILTestOne Pos
+> 
+  
+[02:36:16] [Server thread/INFO] [minecraft/MinecraftServer]: DBILTestOne has the following entity data: [-0.4017556303895957d, -60.0d, -12.848612535317526d]
+> execute as @e[type=dbil:training_enemy] run data get entity @s Health
+> 
+  
+[02:36:16] [Server thread/INFO] [minecraft/MinecraftServer]: Training Rival has the following entity data: 40.0f
+> execute as @e[type=dbil:training_enemy] run data get entity @s Pos
+> 
+  
+[02:36:16] [Server thread/INFO] [minecraft/MinecraftServer]: Training Rival has the following entity data: [2.5787335637274906d, -60.0d, -10.991601795220722d]
+> 
+  
+[02:37:16] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestOne: Teleported DBILTestOne to 2.500000, -60.000000, -12.500000]
+> 
+  
+[02:37:17] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestOne: HP, Ki e Stamina restaurados: DBILTestOne]
+> 
+  
+[02:39:09] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestOne: HP, Ki e Stamina restaurados: DBILTestOne]
+> 
+  
+[02:39:50] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestOne: HP, Ki e Stamina restaurados: DBILTestOne]
+> 
+  
+[02:39:53] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestOne: Summoned new Training Rival]
+> 
+  
+[02:40:07] [Server thread/INFO] [minecraft/MinecraftServer]: DBILTestOne was slain by Training Rival
+> execute as @e[type=dbil:training_enemy] run data get entity @s Health
+> 
+  
+[02:40:45] [Server thread/INFO] [minecraft/MinecraftServer]: Training Rival has the following entity data: 7.209997f
+> 
+  
+[02:41:27] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestOne: HP, Ki e Stamina restaurados: DBILTestOne]
+> 
+  
+[02:41:30] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestOne: Teleported DBILTestOne to -1.996576, -60.000000, -23.350423]
+> dbil debug DBILTestOne
+> 
+  
+[02:42:24] [Server thread/INFO] [minecraft/MinecraftServer]: DBIL Kairo Earth | criado=true | raça=dbil:human | nível=2 | XP=31 | Ki=125.0/125.0 | Stamina=103.0/103.0 | Poder=1174/1174
+> 
+  
+[02:42:24] [Server thread/INFO] [minecraft/MinecraftServer]: Origem=dbil:earth_warrior | estilo=balanced | técnicas=[dbil:ki_wave] | forma=dbil:base | voo=false | carregando=false | combo=0 | alvo=-1 | schema=2
+> dbil debug DBILTestTwo
+> 
+  
+[02:42:24] [Server thread/INFO] [minecraft/MinecraftServer]: DBIL Raku Survivor | criado=true | raça=dbil:saiyan | nível=1 | XP=0 | Ki=120.0/120.0 | Stamina=100.0/100.0 | Poder=568/1187
+> 
+  
+[02:42:24] [Server thread/INFO] [minecraft/MinecraftServer]: Origem=dbil:survivor | estilo=brawler | técnicas=[dbil:ki_wave] | forma=dbil:base | voo=false | carregando=false | combo=0 | alvo=-1 | schema=2
+> 
+  
+[02:42:53] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestOne: Ki de DBILTestOne: 10.0/125.0]
+> 
+  
+[02:43:00] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestTwo: HP, Ki e Stamina restaurados: DBILTestTwo]
+> 
+  
+[02:43:03] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestTwo: Summoned new Training Rival]
+> 
+  
+[02:45:17] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestTwo: HP, Ki e Stamina restaurados: DBILTestOne]
+> 
+  
+[02:45:18] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestTwo: HP, Ki e Stamina restaurados: DBILTestTwo]
+> 
+  
+[02:45:20] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestTwo: Teleported DBILTestOne to 0.500000, -60.000000, 0.500000]
+> 
+  
+[02:45:20] [Server thread/WARN] [minecraft/ServerGamePacketListenerImpl]: DBILTestOne moved too quickly! 2.3405912918473737,0.0,24.000680386449336
+> 
+  
+[02:45:21] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestTwo: Teleported DBILTestTwo to 0.500000, -60.000000, 2.500000]
+> 
+  
+[02:45:21] [Server thread/WARN] [minecraft/ServerGamePacketListenerImpl]: DBILTestTwo moved too quickly! 2.6616101231502824,0.0,30.413170001918118
+> 
+  
+[02:45:22] [Server thread/INFO] [minecraft/MinecraftServer]: [DBILTestTwo: Set the time to 1000]
+> 
+  
+[02:46:23] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: DBILTestOne lost connection: Disconnected
+> 
+  
+[02:46:23] [Server thread/INFO] [minecraft/MinecraftServer]: DBILTestOne left the game
+> 
+  
+[02:46:35] [Server thread/INFO] [minecraft/ServerGamePacketListenerImpl]: DBILTestTwo lost connection: Disconnected
+> 
+  
+[02:46:35] [Server thread/INFO] [minecraft/MinecraftServer]: DBILTestTwo left the game
+> save-all
+> 
+  
+[02:47:45] [Server thread/INFO] [minecraft/MinecraftServer]: Saving the game (this may take a moment!)
+> stop
+> 
+  
+[02:47:45] [Server thread/INFO] [minecraft/MinecraftServer]: Saved the game
+> 
+  
+[02:47:45] [Server thread/INFO] [minecraft/MinecraftServer]: Stopping the server
+> 
+  
+[02:47:45] [Server thread/INFO] [minecraft/MinecraftServer]: Stopping server
+> 
+  
+[02:47:45] [Server thread/INFO] [minecraft/MinecraftServer]: Saving players
+> 
+  
+[02:47:45] [Server thread/INFO] [minecraft/MinecraftServer]: Saving worlds
+> 
+  
+[02:47:45] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[dbil-runtime-test]'/minecraft:overworld
+> 
+  
+[02:47:46] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[dbil-runtime-test]'/minecraft:the_nether
+> 
+  
+[02:47:46] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[dbil-runtime-test]'/minecraft:the_end
+> 
+  
+[02:47:46] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (dbil-runtime-test): All chunks are saved
+> 
+  
+[02:47:46] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+> 
+  
+[02:47:46] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+> 
+  
+[02:47:46] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage: All dimensions are saved
+> 
