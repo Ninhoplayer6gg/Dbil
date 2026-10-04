@@ -106,3 +106,106 @@ jobs:
             run/screenshots/
             run/dbil-autotest-report.txt
           if-no-files-found: ignore
+
+  # Real multiplayer check: a dedicated server and two graphical clients. Alpha transforms, fires a Kamehameha
+  # and flies; Beta records what a remote player receives and renders (see client/dev/MultiplayerAutotest).
+  multiplayer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
+      - name: Compile
+        run: |
+          chmod +x gradlew
+          ./gradlew compileJava --no-daemon
+      - name: Install Xvfb and Mesa
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb libgl1-mesa-dri libglx-mesa0 mesa-utils > /dev/null
+      - name: Dedicated server + two clients (Alpha acts, Beta watches)
+        run: |
+          mkdir -p run
+          echo "eula=true" > run/eula.txt
+          printf "online-mode=false\nlevel-type=flat\nspawn-protection=0\nenforce-secure-profile=false\nspawn-monsters=false\nspawn-animals=false\n" > run/server.properties
+          python3 - <<'PY'
+          import hashlib, json, uuid
+          def offline(name):
+              b = bytearray(hashlib.md5(("OfflinePlayer:" + name).encode()).digest())
+              b[6] = (b[6] & 0x0f) | 0x30
+              b[8] = (b[8] & 0x3f) | 0x80
+              return str(uuid.UUID(bytes=bytes(b)))
+          ops = [{"uuid": offline(n), "name": n, "level": 4, "bypassesPlayerLimit": False} for n in ("Alpha", "Beta")]
+          json.dump(ops, open("run/ops.json", "w"))
+          print(ops)
+          PY
+          for c in A B; do
+            rsync -a --exclude run --exclude .git ./ ../Dbil$c/
+            mkdir -p ../Dbil$c/run
+            printf "onboardAccessibility:false\npauseOnLostFocus:false\ntutorialStep:none\njoinedFirstServer:true\nskipMultiplayerWarning:true\nsoundCategory_master:0.0\nrenderDistance:6\nsimulationDistance:5\nguiScale:2\n" > ../Dbil$c/run/options.txt
+          done
+          export LIBGL_ALWAYS_SOFTWARE=1
+          (./gradlew runServer --no-daemon > server-mp.log 2>&1) &
+          for i in $(seq 1 120); do grep -q "Done (" server-mp.log && break; sleep 5; done
+          grep -q "Done (" server-mp.log || { tail -60 server-mp.log; exit 1; }
+          (cd ../DbilA && timeout 1500 xvfb-run -a -s "-screen 0 960x540x24" ./gradlew runClient --no-daemon -PdbilAutotest=mp-a -PdbilUser=Alpha > client-a.log 2>&1) &
+          A=$!
+          sleep 30
+          (cd ../DbilB && timeout 1500 xvfb-run -a -s "-screen 0 960x540x24" ./gradlew runClient --no-daemon -PdbilAutotest=mp-b -PdbilUser=Beta > client-b.log 2>&1) &
+          B=$!
+          wait $A || echo "client A exit $?"
+          wait $B || echo "client B exit $?"
+          pkill -TERM java || true
+          sleep 5
+          echo "=== SERVER ==="
+          grep -E "joined the game|left the game|logged in|lost connection|kicked|Exception|issued server command" server-mp.log | tail -60 || true
+          for c in A B; do
+            echo "=== CLIENT $c ==="
+            grep -E "DBIL autotest|Exception|crash" ../Dbil$c/client-*.log | grep -v "Yggdrasil\|realms\|Realms\|Narrator\|OpenAL" | tail -60 || true
+            ls ../Dbil$c/run/crash-reports 2>/dev/null && head -80 ../Dbil$c/run/crash-reports/*.txt || true
+            echo "--- report $c"
+            cat ../Dbil$c/run/dbil-autotest-report.txt || true
+          done
+          grep -q "^PASS" ../DbilA/run/dbil-autotest-report.txt
+          grep -q "^PASS" ../DbilB/run/dbil-autotest-report.txt
+      - name: Print multiplayer screenshots (base64 JPEG)
+        if: always()
+        run: |
+          pip install -q pillow
+          python3 - <<'PY'
+          import base64, glob, io, os
+          from PIL import Image
+          for path in sorted(glob.glob('../DbilA/run/screenshots/dbil_*.png') + glob.glob('../DbilB/run/screenshots/dbil_*.png')):
+              img = Image.open(path).convert('RGB')
+              img.thumbnail((960, 540))
+              buf = io.BytesIO()
+              img.save(buf, 'JPEG', quality=82)
+              data = base64.b64encode(buf.getvalue()).decode()
+              name = os.path.basename(path)
+              print('@@IMG-BEGIN ' + name)
+              for i in range(0, len(data), 3000):
+                  print('@@B ' + data[i:i + 3000])
+              print('@@IMG-END ' + name)
+          PY
+      - name: Collect multiplayer logs
+        if: always()
+        run: |
+          mkdir -p mp-logs
+          cp server-mp.log mp-logs/ 2>/dev/null || true
+          for c in A B; do
+            cp ../Dbil$c/client-*.log mp-logs/ 2>/dev/null || true
+            cp ../Dbil$c/run/dbil-autotest-report.txt mp-logs/report-$c.txt 2>/dev/null || true
+          done
+      - name: Upload multiplayer logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dbil-multiplayer-logs
+          path: mp-logs/
+          if-no-files-found: ignore

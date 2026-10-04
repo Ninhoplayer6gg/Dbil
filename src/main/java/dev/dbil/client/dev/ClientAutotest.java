@@ -131,7 +131,7 @@ public final class ClientAutotest {
                 // The rival stands beyond the front camera (4 blocks) so front shots see the fighter, not the rival.
                 spawnRival(level, origin.add(forward.scale(7.0)).add(right.scale(2.5)));
                 // Invisible side camera for cinematic shots of beams and blows.
-                Vec3 camera = origin.add(right.scale(8.0)).add(forward.scale(3.5));
+                Vec3 camera = origin.add(right.scale(6.5)).add(forward.scale(3.5));
                 double ground = level.getHeight(Heightmap.Types.MOTION_BLOCKING, (int) Math.floor(camera.x), (int) Math.floor(camera.z));
                 camera = new Vec3(camera.x, Math.max(origin.y, ground), camera.z);
                 Vec3 focus = origin.add(forward.scale(3.5)).add(right.scale(1.0)).add(0, 1.1, 0);

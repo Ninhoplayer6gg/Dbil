@@ -85,9 +85,16 @@ minecraft {
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             property 'forge.enabledGameTestNamespaces', mod_id
             // CI visual smoke test: ./gradlew runClient -PdbilAutotest=true (scripted run, screenshots, then quits).
+            // Two-client multiplayer test: -PdbilAutotest=mp-a|mp-b -PdbilUser=<name> joins localhost:25565.
             if (project.hasProperty('dbilAutotest')) {
-                property 'dbil.autotest', 'true'
-                args '--quickPlaySingleplayer', 'dbiltest', '--width', '1280', '--height', '720'
+                String mode = project.property('dbilAutotest').toString()
+                property 'dbil.autotest', mode
+                if (mode.startsWith('mp-')) {
+                    args '--quickPlayMultiplayer', 'localhost:25565', '--username', (project.findProperty('dbilUser') ?: 'Alpha').toString(),
+                            '--width', '960', '--height', '540'
+                } else {
+                    args '--quickPlaySingleplayer', 'dbiltest', '--width', '1280', '--height', '720'
+                }
             }
         }
 
