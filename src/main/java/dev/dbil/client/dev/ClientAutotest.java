@@ -174,9 +174,9 @@ public final class ClientAutotest {
             case 196 -> shot(mc, "06_super_saiyan_back");
             case 200 -> Network.sendSelectTechnique(Techniques.KAMEHAMEHA);
             case 205 -> Network.sendAction(Action.TECHNIQUE_HOLD);
-            case 228, 250, 262, 319, 546, 586 -> sideCamera(mc, true);
+            case 228, 250, 262, 319 -> sideCamera(mc, true);
             case 231 -> shot(mc, "07b_kamehameha_charge_side");
-            case 232, 253, 265, 322, 549, 589 -> sideCamera(mc, false);
+            case 232, 253, 265, 322 -> sideCamera(mc, false);
             case 235 -> { maxCharge = Math.round(ClientState.visual(self).techniqueChargeNow(0) * 100); shot(mc, "07_kamehameha_charge"); }
             case 246 -> Network.sendAction(Action.TECHNIQUE_RELEASE);
             case 252 -> shot(mc, "08b_kamehameha_beam_side");
@@ -233,26 +233,25 @@ public final class ClientAutotest {
             }
             case 525 -> shot(mc, "17_vest_headband");
             case 532 -> { mc.options.setCameraType(CameraType.THIRD_PERSON_BACK); Network.sendSelectTechnique(Techniques.GALICK_GUN); }
-            case 534, 574 -> Network.sendAction(Action.TECHNIQUE);
+            case 534, 598, 644 -> Network.sendAction(Action.TECHNIQUE);
+            case 546, 606, 654, 706, 724 -> sideCamera(mc, true);
             case 548 -> shot(mc, "18_galick_gun_side");
-            case 568 -> refill(mc);
-            case 570 -> Network.sendSelectTechnique(Techniques.MASENKO);
-            case 588 -> shot(mc, "19_masenko_side");
-            case 600, 636 -> refill(mc);
-            case 602 -> Network.sendSelectTechnique(Techniques.KI_BARRAGE);
-            case 604 -> Network.sendAction(Action.TECHNIQUE);
-            case 614, 666, 684 -> sideCamera(mc, true);
-            case 617 -> shot(mc, "20_ki_barrage_side");
-            case 618, 669, 687 -> sideCamera(mc, false);
-            case 640 -> server(mc, (server, player, level) -> spawnRival(level, origin.add(forward.scale(4.5)).add(right.scale(0.5))));
-            case 646 -> Network.sendAction(Action.LOCK_ON);
-            case 656 -> { log("vanish target=" + ClientState.visual(self).targetId()); Network.sendAction(Action.VANISH); }
-            case 662 -> shot(mc, "21_vanish_behind_target");
-            case 668 -> shot(mc, "21b_vanish_side");
-            case 680 -> Network.sendAction(Action.GUARD_START);
-            case 686 -> shot(mc, "22_guard_side");
-            case 690 -> { log("guarding=" + ClientState.visual(self).guarding()); Network.sendAction(Action.GUARD_STOP); }
-            case 700 -> {
+            case 549, 610, 658, 709, 727 -> sideCamera(mc, false);
+            // Each beam must end before the next technique: the server refuses a cast while one is still active.
+            case 590, 636 -> refill(mc);
+            case 594 -> Network.sendSelectTechnique(Techniques.MASENKO);
+            case 609 -> shot(mc, "19_masenko_side");
+            case 642 -> Network.sendSelectTechnique(Techniques.KI_BARRAGE);
+            case 657 -> shot(mc, "20_ki_barrage_side");
+            case 680 -> server(mc, (server, player, level) -> spawnRival(level, origin.add(forward.scale(4.5)).add(right.scale(0.5))));
+            case 686 -> Network.sendAction(Action.LOCK_ON);
+            case 696 -> { log("vanish target=" + ClientState.visual(self).targetId()); Network.sendAction(Action.VANISH); }
+            case 702 -> shot(mc, "21_vanish_behind_target");
+            case 708 -> shot(mc, "21b_vanish_side");
+            case 720 -> Network.sendAction(Action.GUARD_START);
+            case 726 -> shot(mc, "22_guard_side");
+            case 730 -> { log("guarding=" + ClientState.visual(self).guarding()); Network.sendAction(Action.GUARD_STOP); }
+            case 740 -> {
                 log("beam ticks observed=" + beamsSeen + " kamehameha charge at shot=" + maxCharge + "%");
                 log("final form=" + ClientState.visual(self).transformation() + " appearance=" + ClientState.data().appearance());
                 log("PASS: sequence completed without client exceptions");
