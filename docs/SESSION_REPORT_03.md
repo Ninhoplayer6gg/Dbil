@@ -56,7 +56,7 @@ telas pequenas × `hudScale`.
 
 **Infra**: protocolo de rede 3 (aparência, eventos de efeito, estado visual ampliado); 6 slots de técnica;
 sons nomeados e 7 partículas próprias; comandos `/dbil learnall` e `/dbil appearance default`; CI com build,
-GameTests, servidor dedicado e teste visual automatizado do cliente.
+GameTests, servidor dedicado, teste visual automatizado do cliente e teste multiplayer (servidor + 2 clientes).
 
 ## 2. Melhorado em relação à 0.2
 
@@ -77,14 +77,14 @@ futuro, orçamento de pacotes, todas as suítes de GameTests da 0.2 (continuam p
 - Novos: `appearance/*`, `client/render/character/*` (11 classes), `client/anim/*`, `client/fx/*`,
   `client/render/KiBeamRenderer`, `technique/KiBeamEntity`, `technique/TechniqueProfile`, `fx/*`,
   `movement/ChaseService`, `movement/VanishService`, `combat/TerrainDamageService`, `gui/HudState`,
-  `gametest/VisualCombatGameTests`, `client/dev/ClientAutotest`, `tools/generate_textures.py`,
+  `gametest/VisualCombatGameTests`, `client/dev/ClientAutotest`, `client/dev/MultiplayerAutotest`, `tools/generate_textures.py`,
   `tools/preview_hair.py`, `.github/workflows/build.yml`.
 - Muito alterados: `network/Network`, `server/ServerActions`, `server/PlayerState`, `combat/CombatService`,
   `technique/TechniqueService`, `technique/Techniques`, `technique/KiWaveEntity`, `targeting/TargetingService`,
   `flight/FlightService`, `flight/FlightMotion`, `transformation/TransformationService`, `character/CharacterData`,
   `gui/DBILHud`, `gui/CharacterCreationScreen`, `gui/DBILMenuScreen`, `client/ClientEvents`, `config/*`.
 - Removidos (substituídos): `animation/PlayerPoses`, `animation/PlayerPresentation`, `rendering/*`.
-- Em números (desde a base 0.2): 38 classes novas, 35 alteradas, 8 removidas; ~7,5 mil linhas adicionadas em `src`.
+- Em números (desde a base 0.2): 39 classes novas, 35 alteradas, 8 removidas; ~7,8 mil linhas adicionadas em `src`.
 
 ## 5. Dependências novas
 
