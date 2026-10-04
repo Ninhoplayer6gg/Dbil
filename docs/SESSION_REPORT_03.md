@@ -113,12 +113,22 @@ Os da 0.2 + `/dbil learnall [jogador]` e `/dbil appearance default [jogador]` (p
 
 ## 9. Build e testes executados
 
-RESULT_SECTION
+Todos executados de verdade no GitHub Actions (o ambiente desta sessão não alcança o Maven do Forge; ver
+[VALIDATION.md](VALIDATION.md)):
+
+- `./gradlew clean build`: **BUILD SUCCESSFUL**; JAR em `build/libs/dbil-0.3.0.jar` (artefato `dbil-jar` de cada run).
+- `./gradlew runGameTestServer`: **All 61 required tests passed** (50 da 0.2 + 11 novos).
+- Servidor dedicado: sobe até `Done (...)` com o DBIL 0.3.0, sem erro de classe de cliente.
+- Cliente visual (Xvfb, renderização por software): **PASS**, 28 screenshots cobrindo modelo, HUD, lock-on, aura,
+  transformação, SSJ, os três feixes, Ki Barrage, combo, Vanish, guarda, voo rápido, editor, menu e primeira pessoa.
+- Multiplayer (servidor dedicado + 2 clientes gráficos): em verificação no CI (a primeira execução mostrou toda a sincronização remota funcionando; ver VALIDATION.md).
+- Problemas reais encontrados pelos testes visuais e corrigidos: reverter forma na água/montado; cabelo SSJ de
+  costas; rótulo de carga na HUD; dica do menu sobre o botão; partículas da preparação humana.
 
 ## 10. Bugs conhecidos / limitações
 
-- Sem teste em **Android físico** e sem teste com **dois clientes gráficos** simultâneos (a sincronização está
-  implementada e coberta por código de servidor, mas não foi observada com duas instâncias).
+- Sem teste em **Android físico** (escala da HUD, toque, FPS e memória precisam ser conferidos no aparelho).
+- Multiplayer testado com dois clientes na mesma máquina (rede local, sem latência real).
 - Camadas de jogador adicionadas por **outros mods** não aparecem em personagens DBIL (as camadas vanilla sim).
   Desligar `dbilCharacterModel` volta ao modelo vanilla.
 - Sons são variações de sons vanilla nomeados como eventos DBIL (substituíveis por resource pack).

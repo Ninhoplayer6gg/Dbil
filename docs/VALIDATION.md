@@ -27,7 +27,7 @@ Execução de referência: GitHub Actions run #8 (commit `a089055`, 2026-10-04),
 | `./gradlew runGameTestServer` | **All 61 required tests passed** (50 da 0.2 + 11 novos da 0.3) |
 | Servidor dedicado | `Done (5.783s)!` com DBIL 0.3.0 carregado, sem erro de classe de cliente/dist |
 | Cliente visual (Xvfb) | **PASS**, 28 screenshots, roteiro completo sem exceção no cliente |
-| Multiplayer (servidor + 2 clientes) | MP_RESULT |
+| Multiplayer (servidor + 2 clientes) | em verificação (run #10: sincronização remota toda observada; falha só de orquestração do teste, corrigida) |
 
 Marcos registrados pelo cliente na run #8: `lock-on target=237`, `charging=true`, `transforming=true`,
 `form=dbil:super_saiyan`, `combo target=413 rival=413`, `flying=true fastFlight=true`, `after revert form=dbil:base`,
