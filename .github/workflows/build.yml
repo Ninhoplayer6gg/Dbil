@@ -148,7 +148,7 @@ jobs:
           for c in A B; do
             rsync -a --exclude run --exclude .git ./ ../Dbil$c/
             mkdir -p ../Dbil$c/run
-            printf "onboardAccessibility:false\npauseOnLostFocus:false\ntutorialStep:none\njoinedFirstServer:true\nskipMultiplayerWarning:true\nsoundCategory_master:0.0\nrenderDistance:6\nsimulationDistance:5\nguiScale:2\n" > ../Dbil$c/run/options.txt
+            printf "onboardAccessibility:false\npauseOnLostFocus:false\ntutorialStep:none\njoinedFirstServer:true\nskipMultiplayerWarning:true\nsoundCategory_master:0.0\nrenderDistance:6\nsimulationDistance:5\nguiScale:2\ntextBackgroundOpacity:0.0\n" > ../Dbil$c/run/options.txt
           done
           export LIBGL_ALWAYS_SOFTWARE=1
           (./gradlew runServer --no-daemon > server-mp.log 2>&1) &

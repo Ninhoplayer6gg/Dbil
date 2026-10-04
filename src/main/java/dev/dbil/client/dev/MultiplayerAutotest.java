@@ -72,6 +72,7 @@ public final class MultiplayerAutotest {
             finish(mc);
             return;
         }
+        mc.getToasts().clear();
         if (mc.player == null || mc.level == null || !ClientState.received()) return;
         tick++;
         String due = PENDING_SHOTS.remove(tick);
@@ -109,7 +110,9 @@ public final class MultiplayerAutotest {
         double ax = Mth.floor(anchor.x) + 0.5, az = Mth.floor(anchor.z) + 0.5;
         int y = Mth.floor(anchor.y);
         switch (t) {
-            case 0 -> command(mc, "gamerule doDaylightCycle false");
+            // Command feedback would cover the scene in both clients' chat.
+            case 0 -> command(mc, "gamerule sendCommandFeedback false");
+            case 1 -> command(mc, "gamerule doDaylightCycle false");
             case 2 -> command(mc, "time set 6000");
             case 4 -> command(mc, "weather clear");
             case 6 -> command(mc, "dbil addxp 4000");
@@ -162,8 +165,10 @@ public final class MultiplayerAutotest {
         }
         Player alpha = other(mc);
         if (alpha == null) {
-            if (start >= 0 && finishAt < 0) {
-                log("FAIL: alpha left; missing=" + missing());
+            // Beta stays until Alpha has finished and left, so Alpha's own checks never see Beta disappear.
+            if (start >= 0) {
+                log(missing().isEmpty() ? "PASS: beta observed every remote state of alpha " + OBSERVED
+                        : "FAIL: alpha left; missing=" + missing());
                 finish(mc);
             }
             return;
@@ -183,9 +188,9 @@ public final class MultiplayerAutotest {
         observe("alpha_beam", near && !mc.level.getEntitiesOfClass(KiBeamEntity.class, alpha.getBoundingBox().inflate(48)).isEmpty(),
                 "mp_b_alpha_kamehameha", 8);
         observe("alpha_flying", visual.flying(), "mp_b_alpha_flying", 14);
-        if (finishAt < 0 && missing().isEmpty()) finishAt = tick + 30;
+        if (finishAt < 0 && missing().isEmpty()) finishAt = tick + 20 * 60;
         if (tick == finishAt) {
-            log("PASS: beta observed every remote state of alpha " + OBSERVED);
+            log("PASS: beta observed every remote state of alpha " + OBSERVED + " (alpha still online)");
             finish(mc);
         } else if (finishAt < 0 && tick - start > 20 * 120) {
             log("FAIL: missing=" + missing() + " observed=" + OBSERVED);
