@@ -72,6 +72,10 @@ public final class DebugCommands {
                                 Techniques.values().stream().map(technique -> technique.id()), builder))
                         .executes(context -> learn(context, self(context)))
                         .then(Commands.argument("player", EntityArgument.player()).executes(context -> learn(context, target(context))))));
+        root.then(adminPlayerCommand("learnall", DebugCommands::learnAll));
+        root.then(Commands.literal("appearance").requires(source -> source.hasPermission(2))
+                .then(Commands.literal("default").executes(context -> defaultAppearance(context, context.getSource().getPlayerOrException()))
+                        .then(Commands.argument("player", EntityArgument.player()).executes(context -> defaultAppearance(context, target(context))))));
         root.then(Commands.literal("spawn").requires(source -> source.hasPermission(2))
                 .executes(context -> spawn(context, 1))
                 .then(Commands.argument("count", IntegerArgumentType.integer(1, 8))
@@ -214,6 +218,28 @@ public final class DebugCommands {
         data.equip(id);
         Network.sync(player);
         return feedback(context, "Técnica aprendida: " + id + " por " + player.getScoreboardName());
+    }
+
+    /** Testing helper: learns every registered technique and fills the six loadout slots in registry order. */
+    private static int learnAll(CommandContext<CommandSourceStack> context, ServerPlayer player) {
+        CharacterData data = CharacterCapability.get(player);
+        if (!requireCharacter(context.getSource(), data)) return 0;
+        int learned = 0;
+        for (var technique : Techniques.values()) {
+            if (data.learn(technique.id())) learned++;
+            data.equip(technique.id());
+        }
+        Network.sync(player);
+        return feedback(context, "Técnicas aprendidas: " + learned + " | equipadas: " + data.equippedTechniques().size()
+                + "/" + CharacterData.MAX_EQUIPPED + " por " + player.getScoreboardName());
+    }
+
+    private static int defaultAppearance(CommandContext<CommandSourceStack> context, ServerPlayer player) {
+        CharacterData data = CharacterCapability.get(player);
+        if (!requireCharacter(context.getSource(), data)) return 0;
+        data.setAppearance(dev.dbil.appearance.CharacterAppearance.defaultFor(data.raceId()));
+        Network.sync(player);
+        return feedback(context, "Aparência padrão restaurada para " + player.getScoreboardName());
     }
 
     private static int reset(CommandContext<CommandSourceStack> context, ServerPlayer player) {

@@ -84,6 +84,11 @@ minecraft {
         client {
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
             property 'forge.enabledGameTestNamespaces', mod_id
+            // CI visual smoke test: ./gradlew runClient -PdbilAutotest=true (scripted run, screenshots, then quits).
+            if (project.hasProperty('dbilAutotest')) {
+                property 'dbil.autotest', 'true'
+                args '--quickPlaySingleplayer', 'dbiltest', '--width', '1280', '--height', '720'
+            }
         }
 
         server {

@@ -69,6 +69,7 @@ public final class KiBeamEntity extends Entity {
     }
 
     private UUID ownerUuid;
+    private ServerPlayer ownerRef;
     private float damage;
     private double width = 0.8;
     private double range = 32;
@@ -93,6 +94,7 @@ public final class KiBeamEntity extends Entity {
     public void initialize(ServerPlayer owner, TechniqueDefinition definition, TechniqueProfile profile, Vec3 direction,
                            float damage, float charge) {
         ownerUuid = owner.getUUID();
+        ownerRef = owner;
         entityData.set(OWNER, owner.getId());
         entityData.set(TECHNIQUE, definition.id().toString());
         entityData.set(CHARGE, charge);
@@ -269,9 +271,12 @@ public final class KiBeamEntity extends Entity {
         if (blockImpact) TerrainDamageService.crater(owner, server, head, Math.min(3.0, 0.8 + charge * 2.2), charge);
     }
 
+    /** Direct reference first (no lookup each tick); UUID lookup covers a replaced player entity. */
     private ServerPlayer owner() {
+        if (ownerRef != null && !ownerRef.isRemoved() && ownerRef.getUUID().equals(ownerUuid)) return ownerRef;
         if (ownerUuid == null || !(level() instanceof ServerLevel server)) return null;
-        return server.getEntity(ownerUuid) instanceof ServerPlayer player ? player : null;
+        ownerRef = server.getEntity(ownerUuid) instanceof ServerPlayer player ? player : null;
+        return ownerRef;
     }
 
     @Override

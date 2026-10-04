@@ -49,6 +49,43 @@ jobs:
           tail -40 server-output.log
           grep -q "Done (" server-output.log
           ! grep -E "Exception in server tick loop|Encountered an unexpected exception|NoClassDefFoundError|ClassNotFoundException|for invalid dist|Mod loading has failed" server-output.log
+      - name: Client visual autotest (Xvfb + Mesa software rendering)
+        if: success()
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb libgl1-mesa-dri libglx-mesa0 mesa-utils > /dev/null
+          mkdir -p run/saves
+          rm -rf run/saves/dbiltest
+          cp -r run/world run/saves/dbiltest
+          rm -f run/saves/dbiltest/session.lock
+          printf "onboardAccessibility:false\npauseOnLostFocus:false\ntutorialStep:none\njoinedFirstServer:true\nskipMultiplayerWarning:true\nsoundCategory_master:0.0\nrenderDistance:6\nsimulationDistance:5\nguiScale:2\n" > run/options.txt
+          export LIBGL_ALWAYS_SOFTWARE=1
+          timeout 1200 xvfb-run -a -s "-screen 0 1280x720x24" ./gradlew runClient --no-daemon -PdbilAutotest=true > client-output.log 2>&1 || echo "client exit code $?"
+          grep -E "DBIL autotest|Exception|Error|crash" client-output.log | grep -v "Yggdrasil\|realms\|Realms" | tail -80 || true
+          ls -la run/screenshots || true
+          ls -la run/crash-reports 2>/dev/null && cat run/crash-reports/*.txt | head -120 || true
+          echo "=== REPORT ==="
+          cat run/dbil-autotest-report.txt
+          grep -q "PASS:" run/dbil-autotest-report.txt
+      - name: Print screenshots (base64 JPEG)
+        if: always()
+        run: |
+          pip install -q pillow
+          python3 - <<'PY'
+          import base64, glob, io, os
+          from PIL import Image
+          for path in sorted(glob.glob('run/screenshots/dbil_*.png')):
+              img = Image.open(path).convert('RGB')
+              img.thumbnail((960, 540))
+              buf = io.BytesIO()
+              img.save(buf, 'JPEG', quality=82)
+              data = base64.b64encode(buf.getvalue()).decode()
+              name = os.path.basename(path)
+              print('@@IMG-BEGIN ' + name)
+              for i in range(0, len(data), 3000):
+                  print('@@B ' + data[i:i + 3000])
+              print('@@IMG-END ' + name)
+          PY
       - name: Upload JAR
         if: always()
         uses: actions/upload-artifact@v4
@@ -65,4 +102,7 @@ jobs:
             build-output.log
             gametest-output.log
             server-output.log
+            client-output.log
+            run/screenshots/
+            run/dbil-autotest-report.txt
           if-no-files-found: ignore
