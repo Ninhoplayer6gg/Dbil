@@ -208,9 +208,13 @@ public final class DBILHud {
         }
         String name = font.plainSubstrByWidth(definition.displayName().getString(), w - 34);
         g.drawString(font, name, x + 28, y + 2, (alpha << 24) | 0xFFFFFF, true);
-        String detail = cooldown > 0 ? Component.translatable("hud.dbil.cooldown_short", (cooldown + 19) / 20).getString()
+        // While preparing/holding, the server's next-use tick still includes the charge, so show the charge instead.
+        boolean charging = visual.chargingTechnique() && definition.id().equals(visual.technique());
+        String detail = charging ? Component.translatable("hud.dbil.charge_percent",
+                        Math.round(visual.techniqueChargeNow(0) * 100)).getString()
+                : cooldown > 0 ? Component.translatable("hud.dbil.cooldown_short", (cooldown + 19) / 20).getString()
                 : Component.translatable("hud.dbil.ki_cost", Math.round(TechniqueService.kiCost(definition, data))).getString();
-        g.drawString(font, detail, x + 28, y + 11, (alpha << 24) | (cooldown > 0 ? 0xFF9A88 : 0x9FD8FF), false);
+        g.drawString(font, detail, x + 28, y + 11, (alpha << 24) | (charging ? 0xFFE7A0 : cooldown > 0 ? 0xFF9A88 : 0x9FD8FF), false);
         if (recent > 0 && expand < 0.5F) {
             String key = ClientEvents.TECHNIQUE.getTranslatedKeyMessage().getString();
             g.drawString(font, "[" + key + "]", x + w - font.width("[" + key + "]") + 2, y + 11, (alpha << 24) | 0xFFE08A, false);

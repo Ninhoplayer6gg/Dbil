@@ -25,12 +25,17 @@ import dev.dbil.technique.KiBeamEntity;
 import dev.dbil.technique.TechniqueProfile;
 import dev.dbil.technique.TechniqueService;
 import dev.dbil.technique.Techniques;
+import dev.dbil.transformation.TransformationEligibility;
+import dev.dbil.transformation.TransformationService;
+import dev.dbil.transformation.Transformations;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
@@ -310,6 +315,27 @@ public final class VisualCombatGameTests {
         ResourceLocation selected = data.selectedTechnique();
         helper.assertTrue(data.unequip(selected) && !data.selectedTechnique().equals(selected)
                 && data.equippedTechniques().contains(data.selectedTechnique()), "Unequipping the selection moves it to an equipped slot");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty", batch = "dbil_v03")
+    public static void poweringDownWorksWhileMountedButStartingDoesNot(GameTestHelper helper) {
+        ServerPlayer player = fakePlayer(helper, "Montado");
+        CharacterData data = create(helper, player, Races.SAIYAN, 5);
+        data.unlockTransformation(Transformations.SUPER_SAIYAN);
+        data.setTransformation(Transformations.SUPER_SAIYAN);
+        Boat boat = EntityType.BOAT.create(helper.getLevel());
+        Vec3 position = helper.absoluteVec(new Vec3(2.5, 1, 2.5));
+        boat.moveTo(position.x, position.y, position.z, 0, 0);
+        helper.getLevel().addFreshEntity(boat);
+        helper.assertTrue(player.startRiding(boat, true) && player.isPassenger(), "Fixture: the fighter is mounted");
+        helper.assertTrue(TransformationService.start(player, CharacterData.BASE_FORM) == TransformationEligibility.Result.READY
+                && data.currentTransformation().equals(CharacterData.BASE_FORM), "Reverting to base is accepted while mounted");
+        helper.assertTrue(TransformationService.start(player, Transformations.SUPER_SAIYAN) == TransformationEligibility.Result.INVALID_STATE
+                && ServerRuntime.state(player).transformationChargeTicks == 0, "Starting an activation while mounted is still refused");
+        player.stopRiding();
+        boat.discard();
+        cleanup(player);
         helper.succeed();
     }
 

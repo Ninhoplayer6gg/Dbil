@@ -1,58 +1,122 @@
-# Combate e técnicas DBIL 0.2
+# Combate e técnicas — DBIL 0.3.0
 
-O servidor recebe intenções, seleciona um alvo dentro de um cone e valida criação de personagem, estado, distância, visibilidade, custo e cooldown. O ID de alvo enviado pelo cliente não controla o dano. Ferramentas e armas continuam usando o combate Minecraft; mão vazia usa o combate DBIL. Uma intenção sem alvo também consome stamina e respeita cooldown, impedindo tentativas gratuitas por packet.
+O servidor recebe intenções, escolhe o alvo (lock-on ou cone à frente) e valida personagem, estado, distância,
+visibilidade, custo e cooldown. Nenhum ID de alvo, dano, custo ou posição enviado pelo cliente decide o resultado.
+Ferramentas e armas continuam no combate Minecraft; a mão vazia usa o combate DBIL.
 
-## Combate físico
+## Entrada de ataque (cliente)
 
-- Leve: intervalo mínimo de 8 ticks, alcance de 3,4 blocos, custo de 2 stamina.
-- Pesado: intervalo mínimo de 18 ticks, alcance de 3,8 blocos, custo de 7 stamina.
-- Combo: três golpes leves e um finalizador, com janela de 24 ticks entre golpes. O pesado encerra a sequência.
-- Dano: `2 + Strength * transformationMultiplier * 0.14`, com multiplicador 1,9 no pesado ou 1,35 no finalizador. A configuração global de dano é aplicada antes do processamento de dano Minecraft.
-- Defesa DBIL: redução `Defense / (Defense + 80)`, limitada a 65%, usando o multiplicador de transformação. `GuardService` aplica essa redução uma única vez em `LivingHurtEvent` para ataques tangíveis contra jogadores DBIL, incluindo NPCs e ataques vanilla. Os serviços de ataque não reaplicam Defense. A armadura vanilla continua operando no processamento de dano Minecraft.
-- Knockback: impulso próprio horizontal/vertical, respeitando resistência ao knockback. Jogadores recebem packet de velocidade, e o integrador de voo recebe o mesmo impulso.
+`InputEvent.InteractionKeyMappingTriggered` intercepta o ataque com mão vazia quando o cursor está numa entidade viva,
+no ar, ou quando há um alvo travado a até 6 blocos; nesses casos o cliente envia `LIGHT`, `HEAVY`, `LAUNCHER` ou
+`SMASH` e anima o golpe imediatamente. Com o cursor num bloco e sem alvo travado próximo, a mineração vanilla segue
+normal. O evento vanilla `AttackEntityEvent` continua redirecionado no servidor como antes.
 
-Golpes DBIL aceitos usam sua própria janela de dano e não perdem os golpes de combo para a imunidade de dez ticks do combate vanilla. NPCs mantêm a cadência de ataque da IA Minecraft.
+| Entrada | Ação |
+|---|---|
+| ataque | `LIGHT` (combo) |
+| Shift + ataque | `HEAVY`; com 2+ golpes leves nos últimos 24 ticks vira `SMASH` |
+| Espaço + ataque | `LAUNCHER` |
+| botões em J → Ações | qualquer uma das quatro |
+
+## Combate físico (servidor, `CombatService`)
+
+| Golpe | Stamina | Intervalo | Dano × | Empurrão horiz./vert. | Observação |
+|---|---:|---:|---:|---|---|
+| Jab / cruzado / chute | 2 | 7 ticks | 1,0 / 1,05 / 1,2 | 0,12–0,22 / 0,04–0,12 | combo com janela de 24 ticks |
+| Final (4º leve) | 2 | 7 | 1,45 | 0,85 / 0,30 | abre janela de perseguição (20 ticks) |
+| Pesado | 7 | 18 | 1,9 | 0,95 / 0,32 | pressiona guarda (+12 stamina no bloqueio) |
+| Launcher | 9 | 18 | 1,4 | 0,15 / 1,05 | lança para cima; janela de perseguição 30 ticks |
+| Smash | 10 | 20 | 1,7 | 1,8 / 0,22 | joga longe; de cima num alvo no ar vira golpe meteoro (vert. −1,1) |
+
+- Dano base `2 + Strength × multiplicadorDaForma × 0,14`, × multiplicador global; Defense/guarda aplicadas uma vez em
+  `GuardService` (inalterado da 0.2).
+- Alcance 3,4 (leve) / 3,8 (pesados); com alvo travado, +0,8 (a animação cobre o avanço curto).
+- **Aéreo**: tudo funciona voando; golpes leves de um atacante em voo mantêm NPCs suspensos para continuar o combo.
+- **Hit-stun**: o rival de treino fica atordoado 6–14 ticks (sem navegar nem atacar), deixando o combo legível.
+- Cada golpe aceito envia `MELEE_SWING`; cada acerto envia `HIT` (reação, partículas, flash, tremor, contador).
+
+## Perseguição (`ChaseService`)
+
+Combo → launcher/smash/final → **dash dentro da janela** → o atacante é levado (movimento com colisão) a 1,7 bloco do
+alvo, mirando a posição prevista. Valida janela, alvo vivo e elegível, alcance (`chaseRange`, 18) e linha de visão;
+custa `chaseStaminaCost` (10) e consome a janela. A HUD mostra "[X] Perseguir!".
+
+## Vanish (`VanishService`)
+
+Exige alvo travado a até `vanishRange` (12). O servidor testa poucos pontos fixos (atrás, lados e — se alguém estiver
+no ar — acima do alvo) e aceita o primeiro livre de blocos/líquidos, carregado, dentro da borda e com visão do alvo.
+Custa `vanishStaminaCost` (20) + 4 Ki, recarga `vanishCooldownTicks` (50). Não existe destino arbitrário.
+
+## Dash direcional
+
+`DASH`, `DASH_LEFT`, `DASH_RIGHT`, `DASH_BACK`: o cliente informa só a direção (teclas de movimento); distância (2,0–2,3),
+colisão e custos são do servidor.
 
 ## Guarda
 
-Segurar guarda envia apenas intenção e heartbeat; o servidor valida o estado e a direção de cada impacto. A fonte precisa estar à frente do jogador, em um cone com produto escalar mínimo de 0,15. Fogo, fome, void e fontes que ignoram armadura não podem ser bloqueados. A posição real do projétil é preservada no DamageSource das técnicas.
+Inalterada da 0.2 (frontal, stamina por dano, quebra de guarda). Agora com eventos `GUARD_BLOCK`/`GUARD_BREAK`,
+som e partículas, e pose de antebraços cruzados.
 
-Guarda reduz 70% do dano já ajustado por Defense, configurável por `guardDamageReduction`. Cada impacto custa o maior valor entre 3 stamina e `dano * guardStaminaPerDamage` (padrão 2). Um pesado DBIL acrescenta 12 stamina ao custo. A cobrança é atômica: se faltar stamina, o golpe mantém seu dano após Defense, a stamina vai para zero e a guarda quebra por `guardBreakTicks` (padrão 35). A quebra é sincronizada e impede golpes/técnicas durante sua janela. Segurar guarda consome 0,08 stamina por tick, impede sprint e recebe timeout se o heartbeat parar por 40 ticks. Não há regeneração de stamina enquanto a guarda está ativa.
+## Lock-on (`TargetingService`)
 
-Bloqueios efetivos cancelam o knockback vanilla do impacto e deixam apenas 20% do impulso DBIL. Ataques por trás não ganham essa proteção. Guarda não pode ser iniciada durante carregamento de Ki, transformação ou sequência de técnica; golpes e técnicas também não podem começar durante guarda.
+- Alcance 32, cone e linha de visão, como antes.
+- Seleção prefere quem está atacando o jogador (alvo do mob, último agressor) e rivais de treino.
+- **Troca de alvo** (`TARGET_NEXT`, tecla B): próximo oponente no sentido horário, mesma caixa limitada.
+- Retículo 3D girando em volta do alvo e painel na HUD (nome, HP, PL, distância).
+- Com alvo, a câmera acompanha (opção) e a movimentação vira combate: strafe circula o alvo, dash lateral,
+  subir/descer no voo, perseguição.
 
-## Técnicas selecionáveis
+## Técnicas
 
-`selectedTechnique` é persistido nos dados do personagem (schema 3), separado do conjunto de técnicas equipadas. `TechniqueService.select` valida definição executável, aprendizado, equipamento, requisitos e maestria no servidor; não é possível trocar durante carga ou sequência. O cliente não altera seleção diretamente. Saves anteriores usam Ki Wave ou a primeira técnica equipada válida.
+### Definições
 
-| Técnica | Ki base | Carga | Cooldown após execução | Alcance | Projéteis |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| Ki Wave | 12 | 12 ticks | 50 ticks | 32 blocos | 1 |
-| Ki Blast | 5 | 2 ticks | 12 ticks | 24 blocos | 1 |
-| Ki Barrage | 24 | 8 ticks | 60 ticks | 28 blocos | 3, intervalo de 4 ticks |
+`TechniqueDefinition` (0.2) continua; o novo `TechniqueProfile` acrescenta carga, escalas e apresentação sem alterar
+o record antigo.
 
-Custos e cooldowns de Blast/Barrage são configuráveis individualmente. Ki Wave continua sendo a técnica inicial; Blast e Barrage são aprendidas por progressão/missões. Controle de Ki reduz até 35% do custo; multiplicadores raciais e `techniqueKiCostMultiplier` também participam. Dash e voo respeitam a eficiência energética racial, além de seus próprios custos configurados. A cobrança ocorre uma vez no início aceito, inclusive no Barrage, e não é devolvida ao cancelar, morrer ou desconectar. O conjunto da sequência impede novas ativações antes de terminar e o cooldown começa após seu último disparo.
+| Técnica | Tipo | Ki base | Preparo | Carga máx. | Ki total no máx. | Dano × no máx. | Recarga | Alcance | Diferencial |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---|
+| Ki Wave | projétil | 12 | 12 | 30 | ×2,0 | ×2,2 | 50 | 32 | esfera cresce ×2,2; ≥60% explode |
+| Ki Blast | projétil | 5 | 2 | — | — | — | 12 | 24 | rápido, barato |
+| Ki Barrage | rajada | 24 | 8 | — | — | — | 60 | 28 | 6 disparos menores, mãos alternadas, paga uma vez |
+| Kamehameha | feixe | 30 | 10 | 40 | ×2,2 | ×2,4 | 120 | 40 | equilibrado, largura 0,9, 30 ticks |
+| Galick Gun | feixe | 34 | 8 | 32 | ×2,3 | ×2,6 | 130 | 36 | mais dano e empurrão, mais lento, estreito, 24 ticks |
+| Masenko | feixe | 22 | 6 | 18 | ×1,8 | ×2,0 | 90 | 34 | carga e viagem rápidas, largo, mais fraco, 18 ticks |
 
-Cada ativação concluída acrescenta 0,05 de maestria, independentemente do número de projéteis, e registra `technique_casts`. Acertos com dano real registram `technique_hits`; impactos em parede e tentativas inválidas não contam. O multiplicador de transformação de Ki Power participa do dano na criação do projétil. Golpes e acertos de técnicas podem aumentar a maestria da transformação ativa, respeitando o intervalo próprio desse serviço.
+Custos de Blast/Barrage seguem configuráveis. Controle de Ki, raça e `techniqueKiCostMultiplier` participam como na 0.2;
+na forma transformada com maestria baixa o custo sobe até +25%.
 
-`KiWaveEntity` é uma entidade de energia própria, não uma flecha recolorida. O mesmo executor serve os três padrões definidos nos dados, sem uma classe por técnica. A colisão do servidor verifica o segmento percorrido a cada tick contra blocos e entidades; uma colisão encerra o projétil. Ele não quebra blocos, não atravessa paredes, não explode e não fica ativo mais de 100 ticks. O spawn começa na posição dos olhos, evitando disparar do outro lado de paredes próximas. O alcance usa a origem do disparo, não a posição posterior do lançador: mover-se ou tomar cobertura depois de atirar não invalida um projétil em voo. Paredes no trajeto continuam interceptando-o pelo clip do servidor. NBT de dano, alcance e origem recebe validação contra números não finitos. A identidade da técnica é sincronizada por metadata de entidade e decodificada somente quando muda, permitindo diferenciar apresentação sem alocação a cada frame.
+### Carga (segurar/soltar)
 
-`TechniqueDefinition` e `Techniques` separam dados de custo, carga, geometria, requisitos e apresentação da execução. Tipos adicionais já são representáveis. Definições BEAM exigem `BeamProperties` com largura, duração e grupo de clash; elas ainda não têm executor. Beam Clash e técnicas homing/piercing/explosivas não estão ativos.
+- `TECHNIQUE` (toque rápido, testes, compatível com 0.2): paga o custo base, prepara e dispara com carga mínima.
+- `TECHNIQUE_HOLD`: paga o custo base e prepara; enquanto segura, cada tick de carga paga
+  `custoBase × (fatorKi − 1) / cargaMáx` (para quando o Ki acaba, sem falhar). `TECHNIQUE_RELEASE` dispara com a carga
+  atingida; segurar 40 ticks além do máximo dispara sozinho.
+- A carga escala dano, knockback e tamanho (colisão e visual); marcos visuais 30/60/90/100%.
+- Durante a carga e o feixe o lançador fica lento (−60% no chão, 35% da velocidade de voo).
 
-## Lock-on e PvP
+### Feixes (`KiBeamEntity`)
 
-Seleção limitada a 32 blocos, preferência pelo centro da câmera e teste de linha de visão. O alvo é invalidado ao morrer, sair do alcance, mudar de dimensão ou perder visibilidade. Golpes físicos também exigem que o alvo esteja à frente do jogador. PvP exige configuração DBIL, PvP do servidor, personagem criado e regras de equipe compatíveis.
+- Origem nas mãos do lançador, atualizada a cada tick; direção vira até `turnRate` graus por tick em direção à mira ou
+  ao alvo travado.
+- A cabeça cresce à velocidade da técnica até um bloco (clip do servidor) ou o alcance; depois sustenta pela duração.
+- Entidades vivas dentro do volume levam impacto (55% do dano + empurrão) e acertos a cada 6 ticks (45% divididos).
+- Fim: explosão (dano em área 30%, raio por largura e carga, até 12 alvos) e cratera opcional se terminou num bloco.
+- Não é salvo em disco; o renderizador recebe apenas dono, técnica, direção, comprimento e carga.
 
-## Inimigo de treinamento
+### Projéteis (`KiWaveEntity`)
 
-`NpcDefinitions` permite registrar identidades e baselines de NPCs. O inimigo atual possui 40 HP, ataque 4, velocidade 0,27 e detecção de até 20 blocos. A configuração `npcDifficulty` multiplica somente o dano dos NPCs; HP e atributos básicos permanecem estáveis. O multiplicador global de dano continua sendo aplicado. Sua IA persegue e ataca personagens criados, retalia quando atacado e patrulha quando ociosa. Não voa nem dispara Ki nesta versão. O Poder de Luta deriva dos atributos reais de HP, dano e velocidade, em vez do nível.
+Mesma autoridade da 0.2 (spawn nos olhos, clip contra paredes, alcance pela origem, até 100 ticks), agora com carga
+sincronizada, raio de colisão proporcional, impacto com evento visual e explosão da Ki Wave carregada.
 
-A morte concede 35 XP DBIL ao jogador vivo com crédito de abate, passando pelos multiplicadores da progressão, e registra `training_defeats`. Um marcador persistente impede conceder a mesma recompensa novamente. Não há XP vanilla desse inimigo.
+## Terreno (opcional)
 
-Ele não aparece naturalmente. Pode ser criado por `/dbil spawn`, pelo ovo no modo criativo ou por receita de sobrevivência: dois trigos, dois couros e um lingote de ferro. O modelo do item usa o asset vanilla de ovo; a aparência do inimigo é isolada no renderer do cliente para substituição posterior.
+`TerrainDamageService.crater`: desligado por padrão (`terrainDamage`). Quando ligado, só impactos com carga ≥
+`terrainMinCharge` (0,6), raio ≤ 3, até `terrainMaxBlocks` (24) por evento e 96 por tick no servidor inteiro.
+Mantém: blocos inquebráveis, tag `dbil:terrain_immune`, block entities (baús etc., configurável), resistência acima de
+`terrainMaxResistance` (6 = pedra), proteção de spawn, borda do mundo, modo de jogo e `BlockEvent.BreakEvent` do Forge
+(mods de proteção podem cancelar). Drops opcionais.
 
-## Performance e próximos sistemas
+## Rival de treino
 
-Buscas de alvo só ocorrem na intenção de atacar ou selecionar alvo, e usam caixas limitadas; manutenção de lock-on usa um ID já selecionado. Uma ativação de técnica cria um único projétil e não há mensagens por frame para carregar técnicas. IA usa os goals nativos com limites de perseguição. Não há loops de busca mundial, dano de terreno ou shaders obrigatórios.
-
-A próxima extensão de combate deve acrescentar um executor de beam sustentado, preservando a seleção existente, a autoridade do servidor e o perfil de colisão da definição. A visualização de clash pode então ser construída sobre segmentos/volumes do servidor; não deve decidir força ou dano no cliente.
+Como na 0.2 (HP 40, IA nativa, recompensa única), agora com hit-stun, eventos de golpe/acerto e o modelo DBIL com
+aparência estável por UUID e postura de combate quando agressivo.

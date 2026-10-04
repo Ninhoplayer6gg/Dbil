@@ -253,6 +253,7 @@
   "setting.dbil.transformation_effects.reduced": "reduzida",
   "hud.dbil.drain": "-%s Ki/s",
   "hud.dbil.cooldown_short": "Recarga %ss",
+  "hud.dbil.charge_percent": "Carga %s%%",
   "hud.dbil.ki_cost": "Ki %s",
   "hud.dbil.guard_broken_short": "GUARDA QUEBRADA",
   "hud.dbil.guard_broken_center": "GUARDA QUEBRADA!",

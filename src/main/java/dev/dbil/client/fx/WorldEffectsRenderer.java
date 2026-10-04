@@ -107,8 +107,7 @@ public final class WorldEffectsRenderer {
         }
         if (visual.transforming()) {
             float progress = visual.transformationProgress();
-            boolean saiyan = ClientState.appearance(player.getId()) != null
-                    && dev.dbil.race.Races.SAIYAN.equals(ClientState.appearance(player.getId()).race());
+            boolean saiyan = saiyan(player);
             boolean flick = progress > 0.4F && (player.tickCount / 2) % 2 == 0;
             style = saiyan && (progress > 0.85F || flick) ? AuraStyles.SUPER_SAIYAN
                     : saiyan ? AuraStyles.CHARGING : AuraStyles.POTENTIAL;
@@ -187,6 +186,11 @@ public final class WorldEffectsRenderer {
     }
 
     /** Aura motes and dust, emitted from the client tick so frame rate does not change particle counts. */
+    private static boolean saiyan(Player player) {
+        var appearance = ClientState.appearance(player.getId());
+        return appearance != null && dev.dbil.race.Races.SAIYAN.equals(appearance.race());
+    }
+
     public static void tickParticles(Minecraft minecraft) {
         if (minecraft.level == null || minecraft.player == null || ClientConfig.aura() == ClientConfig.Quality.OFF) return;
         for (Player player : minecraft.level.players()) {
@@ -196,7 +200,8 @@ public final class WorldEffectsRenderer {
             Vec3 center = player.position().add(0, 1, 0);
             if (aura) {
                 AuraStyles.AuraStyle style = visual.transformed() ? AuraStyles.get(visual.transformation())
-                        : visual.transforming() ? AuraStyles.SUPER_SAIYAN : AuraStyles.CHARGING;
+                        : visual.transforming() ? (saiyan(player) ? AuraStyles.SUPER_SAIYAN : AuraStyles.POTENTIAL)
+                        : AuraStyles.CHARGING;
                 int base = visual.transforming() ? 4 : visual.charging() ? 3 : 1;
                 int n = FxParticles.count(base, center);
                 for (int i = 0; i < n; i++) {

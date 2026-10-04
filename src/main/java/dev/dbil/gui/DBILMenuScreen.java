@@ -304,13 +304,17 @@ public final class DBILMenuScreen extends Screen {
     }
     private void renderCharacter(GuiGraphics graphics, CharacterData data, int x, int y) {
         line(graphics, x + 8, y, Component.literal(data.name()), 0xFFFFFF);
-        line(graphics, x + 8, y + 18, Component.translatable("screen.dbil.race", Component.translatable("race.dbil." + data.raceId().getPath())), 0xC9DEED);
-        line(graphics, x + 8, y + 36, Component.translatable("screen.dbil.origin", Component.translatable("origin.dbil." + data.originId().getPath())), 0xC9DEED);
-        line(graphics, x + 8, y + 54, Component.translatable("screen.dbil.style", Component.translatable("style.dbil." + data.styleId())), 0xC9DEED);
-        line(graphics, x + 8, y + 76, Component.translatable("hud.dbil.level", data.level()), 0xFFE08A);
-        line(graphics, x + 8, y + 94, Component.translatable("screen.dbil.experience", data.experience()), 0xC9DEED);
-        line(graphics, x + 8, y + 112, Component.translatable("screen.dbil.power", data.basePower(), data.currentPower()), 0xC9DEED);
-        graphics.drawWordWrap(font, Component.translatable("screen.dbil.controls_hint"), x + 8, y + 132, panelWidth() - 16, 0x94ACBF);
+        line(graphics, x + 8, y + 16, Component.translatable("screen.dbil.race", Component.translatable("race.dbil." + data.raceId().getPath())), 0xC9DEED);
+        line(graphics, x + 8, y + 32, Component.translatable("screen.dbil.origin", Component.translatable("origin.dbil." + data.originId().getPath())), 0xC9DEED);
+        line(graphics, x + 8, y + 48, Component.translatable("screen.dbil.style", Component.translatable("style.dbil." + data.styleId())), 0xC9DEED);
+        line(graphics, x + 8, y + 66, Component.translatable("hud.dbil.level", data.level()), 0xFFE08A);
+        line(graphics, x + 8, y + 82, Component.translatable("screen.dbil.experience", data.experience()), 0xC9DEED);
+        line(graphics, x + 8, y + 98, Component.translatable("screen.dbil.power", data.basePower(), data.currentPower()), 0xC9DEED);
+        // The hint gets the space left above the Done button (top + 212); extra lines are dropped, never drawn over it.
+        int hintY = y + 116, maxLines = Math.max(1, (panelTop() + 208 - hintY) / font.lineHeight);
+        var lines = font.split(Component.translatable("screen.dbil.controls_hint"), panelWidth() - 16);
+        for (int i = 0; i < Math.min(maxLines, lines.size()); i++)
+            graphics.drawString(font, lines.get(i), x + 8, hintY + i * font.lineHeight, 0x94ACBF, false);
     }
     private void renderTechniques(GuiGraphics graphics, CharacterData data, int x, int y, int w) {
         List<TechniqueDefinition> all = techniques();

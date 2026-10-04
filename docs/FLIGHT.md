@@ -1,5 +1,23 @@
 # Voo contínuo e autoridade
 
+## Novidades da 0.3
+
+| Estado | Como entra | Comportamento |
+|---|---|---|
+| Parado (hover) | voo sem input | flutuação suave, pose relaxada; carga de Ki (R) permitida |
+| Normal | WASD | nivelado e estável, velocidade de cruzeiro (inalterado da 0.2) |
+| Rápido | Ctrl/sprint voando, ou "Voo rápido" em J → Ações | segue o pitch da câmera, velocidade × 1,9 limitada por `maxFastFlightSpeed` (1,35), Ki × `fastFlightKiMultiplier` (3) |
+| Combate | voo com alvo travado | strafe circula o alvo, golpes aéreos, dash lateral, subir/descer |
+
+- O input de voo (pacote 1) ganhou o booleano `fast`; o servidor só o aceita durante voo válido e calcula velocidade
+  e custo sozinho. O `FlightAck` leva os dois limites calculados pelo servidor (normal e rápido), para a previsão do
+  cliente não ultrapassar o servidor.
+- Apresentação do voo rápido (cliente): FOV (+14 × `fovIntensity`), linhas de velocidade em volta da câmera, som de
+  vento em loop, pose aerodinâmica e rastro de partículas; tudo configurável (`fovEffects`, `speedLines`,
+  `windSound`), sem pós-processamento.
+- Durante a carga de técnicas e feixes a velocidade de voo cai para 35%.
+
+
 ## Correção da versão 0.2
 
 O voo anterior corrigia o dono com um teleport vanilla a cada quatro ticks. Cada

@@ -30,15 +30,17 @@ public final class TransformationService {
     private TransformationService() {}
 
     public static TransformationEligibility.Result start(ServerPlayer player, ResourceLocation id) {
-        if (!player.isAlive() || player.isRemoved() || player.isSpectator() || player.isSleeping()
-                || player.isPassenger() || player.isInWaterOrBubble()) return TransformationEligibility.Result.INVALID_STATE;
+        if (!player.isAlive() || player.isRemoved()) return TransformationEligibility.Result.INVALID_STATE;
         CharacterData data = CharacterCapability.get(player);
-        PlayerState state = ServerRuntime.state(player);
         if (!data.created()) return TransformationEligibility.Result.NO_CHARACTER;
+        // Powering down is always allowed: water, mounts or sleep only block starting a new activation.
         if (CharacterData.BASE_FORM.equals(id)) {
             revert(player);
             return TransformationEligibility.Result.READY;
         }
+        if (player.isSpectator() || player.isSleeping() || player.isPassenger() || player.isInWaterOrBubble())
+            return TransformationEligibility.Result.INVALID_STATE;
+        PlayerState state = ServerRuntime.state(player);
         if (id == null) return TransformationEligibility.Result.UNKNOWN_FORM;
         var definition = Transformations.get(id).orElse(null);
         if (definition == null) return TransformationEligibility.Result.UNKNOWN_FORM;

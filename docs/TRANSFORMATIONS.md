@@ -1,4 +1,7 @@
-# Transformações jogáveis — DBIL 0.2
+# Transformações jogáveis — DBIL 0.3
+
+As regras de gameplay da 0.2 abaixo continuam válidas. A 0.3 acrescenta a apresentação completa e o efeito da
+maestria sobre o controle de Ki (seção "Apresentação e maestria na 0.3").
 
 O servidor controla ativação, interrupção, Ki, drain e domínio. O cliente solicita uma forma e recebe snapshots para HUD, aura e aparência. Atributos base e reservas não são multiplicados nem regravados; o combate, a defesa e o movimento consultam modificadores temporários.
 
@@ -41,4 +44,33 @@ O domínio interpola gradualmente a eficiência. Com domínio 100, a preparaçã
 
 `TransformationGameTests` testa rejeição por raça, bloqueio, nível e Ki; custo pago uma vez; bootstrap repetido; poder temporário; ausência de acumulação nos atributos; interrupção; drain e exaustão; domínio limitado por tempo; eficiência e preservação de progresso no reset. A existência desses testes não substitui o resultado real da execução nem o teste visual em Battly/Android.
 
-Os modelos e efeitos desta etapa são simples e substituíveis. Não incluem SSJ2, SSJ3, formas divinas, cabelos personalizáveis, Beam Clash ou árvores completas de progressão.
+## Apresentação e maestria na 0.3
+
+Tudo abaixo é cliente, dirigido pelo `StateSnapshot` (forma, ticks de preparação, maestria da forma) e pelos eventos
+`TRANSFORM_COMPLETE`/`TRANSFORM_REVERT` enviados pelo servidor.
+
+| Fase | O que acontece |
+|---|---|
+| Preparação (0–40%) | pose de poder (`CharacterAnimator`), tremor leve do corpo, expressão de grito, aura dourada crescendo, poeira no chão |
+| 40–85% | o cabelo voxel alterna entre a variante base e a Super Saiyajin, cada vez mais rápido; descargas na aura; FOV pulsando |
+| 85–100% | cabelo SSJ fixo, olhos SSJ, grito no ápice, brilho máximo |
+| Conclusão | explosão de poder (flash, anel, onda de choque, partículas), som `transform_complete`, tremor e pulso de FOV; banner da forma na HUD |
+| Ativa | cabelo SSJ do estilo escolhido (cada um dos 7 tem variante própria), olhos/sobrancelhas SSJ, aura dourada com descargas, emblema com estrela |
+| Reversão | evento `TRANSFORM_REVERT`, flash curto e volta do visual base |
+
+`transformationEffects=REDUCED` (cliente) mantém a troca visual mas reduz explosão, tremor e FOV.
+O Potencial Liberado (Humano) usa a aura branca e mantém o cabelo do personagem.
+
+**Maestria** (0–100, já persistida desde a 0.2):
+
+- **Baixa**: preparação mais longa e drain maior (regras da 0.2); a aura oscila, falha e solta flashes/descargas
+  irregulares; técnicas custam até **+25%** de Ki (`TransformationService.controlPenalty`, aplicado em
+  `TechniqueService`).
+- **Alta**: preparação até 60% mais curta, drain menor, aura estável e contida, sem penalidade de custo.
+
+Novas formas registram uma `TransformationDefinition` (gameplay) e um `AuraStyle` (cliente); cor do evento em
+`TransformationService.formColor`.
+
+## Fora do escopo
+
+Não incluem SSJ2, SSJ3, formas divinas, forma personalizada, Oozaru ou Beam Clash.

@@ -1,4 +1,4 @@
-# Desafios pessoais de treino — DBIL 0.2
+# Desafios pessoais de treino — DBIL 0.3
 
 O servidor avalia uma cadeia curta de desafios a cada segundo por jogador e concede, no máximo, uma recompensa por avaliação. Não há packet de resgate: a interface apenas mostra os objetivos e os valores recebidos no snapshot do personagem. Os contadores são individuais, cumulativos e persistem em `trainingStats`; os desafios concluídos persistem em `storyFlags`.
 
@@ -11,6 +11,20 @@ O servidor avalia uma cadeia curta de desafios a cada segundo por jogador e conc
 Os requisitos contam o total do personagem, não exigem reiniciar cada objetivo após concluir o desafio anterior. O nível consulta diretamente o nível RPG atual. Os demais objetivos consultam `training_defeats`, `technique_hits`, `flight_ticks` e `ki_charged`. Carregar com a reserva cheia não aumenta `ki_charged`; regeneração passiva também não participa. Tempo de voo e acertos são registrados exclusivamente pela simulação do servidor. A recompensa de XP passa por `ProgressionService`, respeitando os multiplicadores racial e da configuração e os limites de progressão.
 
 As formas não são escolhidas por comparações de raça dentro do serviço de treino. `TrainingChallenges` consulta as definições registradas em `Transformations`, filtra as raças permitidas e exige `UnlockCondition` com evaluator `dbil:training_challenge` e parâmetro `challenge=dbil:awakening`. As definições da versão atual associam Super Saiyajin aos Saiyajins e Potencial Desbloqueado aos Humanos. O desafio desbloqueia a forma; ativação, requisitos, custos e manutenção continuam sob responsabilidade do serviço de transformação.
+
+## Caminho de feixes (0.3)
+
+Três desafios foram acrescentados **depois** da cadeia da 0.2, sem alterar ordem, marcadores ou recompensas antigas.
+Personagens migrados que já cumprem os requisitos recebem as novas técnicas na avaliação seguinte.
+
+| Desafio | Pré-requisito | Requisitos cumulativos | Recompensa |
+|---|---|---|---|
+| Onda concentrada (`dbil:beam_training`) | Domínio de Ki | 12 acertos com técnicas; 400 Ki carregado; nível 2 | Kamehameha e 70 XP |
+| Disparo relâmpago (`dbil:rapid_ki`) | Onda concentrada | 4 acertos com feixes; 20 acertos com técnicas; 40 golpes corpo a corpo | Masenko e 80 XP |
+| Canhão explosivo (`dbil:explosive_wave`) | Despertar | 10 rivais derrotados; 8 acertos com feixes; nível 3 | Galick Gun e 100 XP |
+
+Contadores novos, sempre produzidos pelo servidor: `beam_hits` (primeiro acerto de cada feixe em `KiBeamEntity`) e
+`melee_hits` (golpe DBIL confirmado em `CombatService`). Com 6 slots, as recompensas equipam a técnica quando há espaço.
 
 ## Salvamento e recompensa única
 
