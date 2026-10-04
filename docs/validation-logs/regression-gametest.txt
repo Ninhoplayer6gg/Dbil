@@ -1,0 +1,31 @@
+
+[02:24:02] [Server thread/INFO] [minecraft/GameTestServer]: 19 tests are now running!
+[02:24:02] [Server thread/WARN] [de.db.DBIL/]: DBIL character schema 12 is newer than supported schema 2. RPG actions are disabled; saved data is preserved. Use the newer DBIL version to load this character.
+[02:24:02] [Server thread/WARN] [de.db.DBIL/]: DBIL character schema 12 is newer than supported schema 2. RPG actions are disabled; saved data is preserved. Use the newer DBIL version to load this character.
+[02:24:02] [Server thread/INFO] [minecraft/GameTestBatchRunner]: Running test batch 'dbil_entities:1' (7 tests)...
+[02:24:03] [Server thread/INFO] [minecraft/GameTestServer]: [++++++++++++_++++++]
+[02:24:03] [Server thread/INFO] [minecraft/GameTestServer]: [++++++++++++_++++++]
+[02:24:03] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++++++++++++++]
+[02:24:03] [Server thread/INFO] [minecraft/GameTestServer]: ========= 19 GAME TESTS COMPLETE ======================
+[02:24:03] [Server thread/INFO] [minecraft/GameTestServer]: All 19 required tests passed :)
+[02:24:03] [Server thread/INFO] [minecraft/GameTestServer]: ====================================================
+[02:24:03] [Server thread/INFO] [minecraft/MinecraftServer]: Stopping server
+[02:24:03] [Server thread/INFO] [minecraft/MinecraftServer]: Saving players
+[02:24:03] [Server thread/INFO] [minecraft/MinecraftServer]: Saving worlds
+[02:24:07] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[02:24:08] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[02:24:08] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[02:24:08] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (world): All chunks are saved
+[02:24:08] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[02:24:08] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[02:24:08] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage: All dimensions are saved
+[02:24:08] [Server thread/INFO] [minecraft/GameTestServer]: Game test server shutting down
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.8/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 42s
+13 actionable tasks: 7 executed, 6 up-to-date

@@ -1,0 +1,15 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_iron": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {"items": [{"items": ["minecraft:iron_ingot"]}]}
+    },
+    "has_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {"recipe": "dbil:training_enemy_spawn_egg"}
+    }
+  },
+  "requirements": [["has_iron", "has_recipe"]],
+  "rewards": {"recipes": ["dbil:training_enemy_spawn_egg"]}
+}

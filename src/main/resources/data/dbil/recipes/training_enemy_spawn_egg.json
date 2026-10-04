@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [" W ", "LIL", " W "],
+  "key": {
+    "W": {"item": "minecraft:wheat"},
+    "L": {"item": "minecraft:leather"},
+    "I": {"item": "minecraft:iron_ingot"}
+  },
+  "result": {"item": "dbil:training_enemy_spawn_egg", "count": 1}
+}
