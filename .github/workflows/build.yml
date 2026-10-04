@@ -1,0 +1,53 @@
+name: build
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build (clean build)
+        run: |
+          chmod +x gradlew
+          set -o pipefail
+          ./gradlew clean build --no-daemon --stacktrace 2>&1 | tee build-output.log
+      - name: GameTests (dedicated logical server)
+        if: success()
+        run: |
+          set -o pipefail
+          ./gradlew runGameTestServer --no-daemon 2>&1 | tee gametest-output.log
+      - name: Dedicated server boot smoke test
+        if: success()
+        run: |
+          mkdir -p run
+          echo "eula=true" > run/eula.txt
+          printf "online-mode=false\nlevel-type=flat\nspawn-protection=0\n" > run/server.properties
+          (sleep 420; echo "stop") | timeout 600 ./gradlew runServer --no-daemon 2>&1 | tee server-output.log || true
+          grep -q "Done (" server-output.log
+          ! grep -E "Exception in server tick loop|Encountered an unexpected exception|NoClassDefFoundError|ClassNotFoundException|RuntimeDistCleaner|Attempted to load class .* for invalid dist" server-output.log
+      - name: Upload JAR
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dbil-jar
+          path: build/libs/*.jar
+          if-no-files-found: ignore
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dbil-logs
+          path: |
+            build-output.log
+            gametest-output.log
+            server-output.log
+          if-no-files-found: ignore
